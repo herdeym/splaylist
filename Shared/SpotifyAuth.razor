@@ -1,0 +1,56 @@
+@page "/callback"
+
+@inject HttpClient Http
+@inject NavigationManager UriHelper
+
+
+<a href="@login_link">Log in with Spotify</a>
+<p>@authresponse</p>
+
+@code {
+
+    string GenerateState()
+    {
+        Random r = new Random();
+        return r.Next().ToString();
+    }
+
+    string authresponse = "none";
+
+    //string nonce = GenerateState();
+
+    const string scopes = "playlist-read-collaborative" +
+        " playlist-modify-private" +
+        " playlist-modify-public" +
+        " playlist-read-private" +
+        " user-library-modify" +
+        " user-library-read" +
+        // "%20user-follow-read" +
+        " user-read-private";
+
+
+    Uri login_link = new Uri("https://accounts.spotify.com/authorize" +
+            "?response_type=token" +
+            // next line won't do anything until nonce is set in a cookie
+            //"&state=" + nonce +
+            // TODO - move next two to secrets / env variables
+            "&client_id=" + Environment.GetEnvironmentVariable("SPLAYLIST_CLIENTID") +
+            "&redirect_uri=" + Environment.GetEnvironmentVariable("SPLAYLIST_CALLBACKURI") +
+            "&scope=" + scopes +
+            "&show_dialog=true");
+
+
+    private void GetLinkParams()
+    {
+        var uri = new Uri(UriHelper.Uri);
+        authresponse = uri.ToString();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetLinkParams();
+    }
+
+
+}
+
