@@ -2,12 +2,14 @@
 
 @inject HttpClient Http
 @inject NavigationManager UriHelper
+@inject Config cfg
 
 
 <a href="@login_link">Log in with Spotify</a>
 <p>@authresponse</p>
 
 @code {
+
 
     string GenerateState()
     {
@@ -16,6 +18,7 @@
     }
 
     string authresponse = "none";
+    Uri login_link;
 
     //string nonce = GenerateState();
 
@@ -29,16 +32,6 @@
         " user-read-private";
 
 
-    Uri login_link = new Uri("https://accounts.spotify.com/authorize" +
-            "?response_type=token" +
-            // next line won't do anything until nonce is set in a cookie
-            //"&state=" + nonce +
-            // TODO - move next two to secrets / env variables
-            "&client_id=" + Environment.GetEnvironmentVariable("SPLAYLIST_CLIENTID") +
-            "&redirect_uri=" + Environment.GetEnvironmentVariable("SPLAYLIST_CALLBACKURI") +
-            "&scope=" + scopes +
-            "&show_dialog=true");
-
 
     private void GetLinkParams()
     {
@@ -49,6 +42,15 @@
     protected override async Task OnInitializedAsync()
     {
         GetLinkParams();
+        login_link = new Uri("https://accounts.spotify.com/authorize" +
+                "?response_type=token" +
+                // next line won't do anything until nonce is set in a cookie
+                //"&state=" + nonce +
+                // TODO - move next two to secrets / env variables
+                "&client_id=" + cfg.ClientID +
+                "&redirect_uri=" + cfg.CallbackURI +
+                "&scope=" + scopes +
+                "&show_dialog=true");
     }
 
 
