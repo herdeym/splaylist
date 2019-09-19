@@ -4,9 +4,17 @@
 @inject NavigationManager UriHelper
 @inject Config cfg
 
+@* QueryHelpers *@
+@using Microsoft.AspNetCore.WebUtilities
+
 
 <a href="@login_link">Log in with Spotify</a>
-<p>@authresponse</p>
+<p>@currentUri</p>
+<p>Access Token: @access_token</p>
+<p>Token Type: @token_type</p>
+<p>Expires In: @expires_in</p>
+<p>State: @state</p>
+<p>Error: @error</p>
 
 @code {
 
@@ -17,26 +25,38 @@
         return r.Next().ToString();
     }
 
-    string authresponse = "none";
+    string currentUri = "none";
     Uri login_link;
 
-    //string nonce = GenerateState();
 
-    const string scopes = "playlist-read-collaborative" +
-        " playlist-modify-private" +
-        " playlist-modify-public" +
-        " playlist-read-private" +
-        " user-library-modify" +
-        " user-library-read" +
-        // "%20user-follow-read" +
-        " user-read-private";
-
+    // Possible parameters after requesting a token
+    string access_token = "";
+    string token_type = "";
+    string expires_in = "";
+    string state = "";
+    string error = "";
 
 
     private void GetLinkParams()
     {
         var uri = new Uri(UriHelper.Uri);
-        authresponse = uri.ToString();
+        string uriString = uri.ToString();
+        currentUri = uriString;
+
+        // if successful callback, the link contains a "hash fragment" rather than a query string
+        // meaning '#' needs to be replaced with '&' (kludge as it isn't correct syntax)
+        uriString = uriString.Replace('#', '&');
+        // and for some reason the same thing happened while testing error, so replace the initial '?'
+        uriString = uriString.Replace('?', '&');
+
+        var parsed = QueryHelpers.ParseQuery(uriString);
+
+        access_token = parsed.TryGetValue("access_token", out var access_token_sv) ? access_token_sv.First() : "";
+        token_type = parsed.TryGetValue("token_type", out var token_type_sv) ? token_type_sv.First() : "";
+        expires_in = parsed.TryGetValue("expires_in", out var expires_in_sv) ? expires_in_sv.First() : "";
+        state = parsed.TryGetValue("state", out var state_sv) ? state_sv.First() : "";
+        error = parsed.TryGetValue("error", out var error_sv) ? error_sv.First() : "";
+
     }
 
     protected override async Task OnInitializedAsync()
@@ -49,8 +69,9 @@
                 // TODO - move next two to secrets / env variables
                 "&client_id=" + cfg.ClientID +
                 "&redirect_uri=" + cfg.CallbackURI +
-                "&scope=" + scopes +
+                "&scope=" + cfg.Scopes +
                 "&show_dialog=true");
+
     }
 
 

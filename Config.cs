@@ -21,8 +21,17 @@ namespace splaylist
         //    _callbackURI = _config["Splaylist:CallbackURI"];
         //}
 
+        private const string _scopes = "playlist-read-collaborative" +
+            " playlist-modify-private" +
+            " playlist-modify-public" +
+            " playlist-read-private" +
+            " user-library-modify" +
+            " user-library-read" +
+            // "%20user-follow-read" +
+            " user-read-private";
 
         public string ClientID { get { return _clientID; } }
         public string CallbackURI {  get { return _callbackURI; } }
+        public string Scopes { get { return _scopes; } }
     }
 }
