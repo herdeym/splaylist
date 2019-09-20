@@ -1,0 +1,63 @@
+﻿@page  "/playlists"
+
+@using  Helpers
+@inject AuthHelper ah
+
+@using SpotifyAPI.Web
+@using SpotifyAPI.Web.Models
+
+<p>Response: @_spotify</p>
+
+<p>User: @pp</p>
+<p>UserID: @userID</p>
+
+
+@if (playlist_reader != null)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var playlist in playlist_reader.Items)
+            {
+                <tr>
+                    <td>@playlist.Name</td>
+                    <td>@playlist.Owner.DisplayName</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Playlists Not Loaded</p>
+}
+
+@code {
+    SpotifyWebAPI _spotify;
+
+    PrivateProfile pp; // lol pp
+    string userID = "";
+    Paging<SimplePlaylist> playlist_reader;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _spotify = new SpotifyWebAPI()
+        {
+            AccessToken = ah.AccessToken,
+            TokenType = ah.TokenType
+        };
+
+        pp = await _spotify.GetPrivateProfileAsync();
+
+        userID = pp.Id;
+
+        playlist_reader = await _spotify.GetUserPlaylistsAsync(pp.Id);
+
+    }
+}
