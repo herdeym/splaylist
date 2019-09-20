@@ -2,6 +2,7 @@
 
 @inject HttpClient Http
 @inject NavigationManager UriHelper
+@inject AuthHelper ah
 
 @using Helpers
 
@@ -14,8 +15,6 @@
 <p>Error: @ah.Error</p>
 
 @code {
-    Uri login_link;
-    AuthHelper ah = new AuthHelper();
 
     protected override async Task OnInitializedAsync()
     {

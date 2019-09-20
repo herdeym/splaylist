@@ -17,6 +17,13 @@
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0-rc1.19456.10" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.0-rc1.19456.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SpotifyAPI.Web">
+      <HintPath>..\SpotifyAPI-NET\SpotifyAPI.Web\bin\Debug\netstandard2.0\SpotifyAPI.Web.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
