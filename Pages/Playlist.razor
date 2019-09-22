@@ -1,0 +1,39 @@
+﻿@page "/playlists/{id}"
+@using splaylist.Helpers
+@using SpotifyAPI.Web.Models
+@using  Blazorise.DataGrid
+
+@inject APIHelper sp
+
+
+
+
+@if (loadedPlaylist != null)
+{
+    <h2>@loadedPlaylist.Name</h2>
+
+    <DataGrid TItem="PlaylistTrack" Data="@loadedPlaylist.Tracks.Items" PageSize="50" class="table table-hover table-dark" >
+        <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true" />
+        <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true" />
+    </DataGrid>
+}
+else
+{
+    <p>Playlist could not be loaded</p>
+}
+
+@code
+{
+
+    [Parameter]
+    public string id { get; set; }
+
+    FullPlaylist loadedPlaylist;
+    PlaylistTrack single;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loadedPlaylist = await sp.S.GetPlaylistAsync(id);
+    }
+
+}

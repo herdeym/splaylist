@@ -1,24 +1,31 @@
 ﻿@page  "/playlists"
 
-@using  Helpers
+
 @inject AuthHelper ah
 @inject APIHelper sp
 
 @using SpotifyAPI.Web
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
+@using splaylist.Helpers
 
 <p>User: @sp.UserProfile.DisplayName</p>
 <p>User ID: @sp.UserProfile.Id</p>
 
 
+<p>Playlist: <NavLink href="@SelectedPlaylistNavLink()" >@selectedPlaylist?.Name</NavLink></p>
+
+
 @if (playlist_reader != null)
 {
 
-    <DataGrid TItem="SimplePlaylist" Data="@playlist_reader.Items"  PageSize="50" class="table table-hover table-dark">
+    <DataGrid TItem="SimplePlaylist" Data="@playlist_reader.Items" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@selectedPlaylist">
+        @*OnSelectedCommand="@OnPlaylistSelect()" > @* OnSelectedCommand according to Blazorise docs, may be an error in lib *@
         <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Name)" Caption="Name" AllowSort="true" />
         <DataGridColumn TItem="SimplePlaylist" Field="Owner.DisplayName" Caption="User" AllowSort="true" />
         <DataGridNumericColumn TItem="SimplePlaylist" Field="Tracks.Total" Caption="Tracks" AllowSort="true" />
+        <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Id)"></DataGridColumn>
+
     </DataGrid>
 
 }
@@ -29,11 +36,22 @@ else
 }
 
 @code {
-    Paging<SimplePlaylist> playlist_reader;
+    Paging<SimplePlaylist>
+    playlist_reader;
+    SimplePlaylist selectedPlaylist;
 
     protected override async Task OnInitializedAsync()
     {
-        // TODO - depaginate
-        playlist_reader = await sp.S.GetUserPlaylistsAsync(sp.UserProfile.Id, limit: 50);
+    // TODO - depaginate
+    playlist_reader = await sp.S.GetUserPlaylistsAsync(sp.UserProfile.Id, limit: 50);
     }
-}
+
+    string SelectedPlaylistNavLink()
+    {
+        return "playlists/" + selectedPlaylist?.Id;
+    }
+    void OnPlaylistSelect()
+    {
+    Console.WriteLine(selectedPlaylist.Name);
+    }
+    }
