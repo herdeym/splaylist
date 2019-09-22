@@ -15,7 +15,15 @@ namespace splaylist.Helpers
     /// </summary>
     public class APIHelper
     {
-        bool _authenticated = false;
+
+        public SpotifyWebAPI S { get; private set; }
+
+        public bool IsAuthenticated()
+        {
+            if (S == null) return false;
+            if (string.IsNullOrEmpty(S.AccessToken)) return false;
+            return true;
+        }
 
         public void Authenticate(string accessToken, string tokenType)
         {
@@ -25,9 +33,7 @@ namespace splaylist.Helpers
                 TokenType = tokenType
             };
 
-            _authenticated = true;
         }
 
-        public SpotifyWebAPI S { get; private set; }
     }
 }

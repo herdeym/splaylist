@@ -3,21 +3,27 @@
 @using Helpers
 @using SpotifyAPI.Web
 
-@inject HttpClient Http
 @inject NavigationManager UriHelper
 @inject AuthHelper ah
 @inject APIHelper  sp
 
+@if (sp != null && sp.IsAuthenticated())
+{
 
-<a href="@AuthHelper.GetLoginLink()">Log in with Spotify</a>
-<p>@ah.FullUri</p>
-<p>Access Token: @ah.AccessToken</p>
-<p>Token Type: @ah.TokenType</p>
-<p>Expires In: @ah.ExpiresIn</p>
-<p>State: @ah.State</p>
-<p>Error: @ah.Error</p>
-<p>SpotifyWebAPI: @sp.S</p>
-<p>SpotifyWebAPI.AccessToken: @sp.S.AccessToken</p>
+
+    <p>@ah.FullUri</p>
+    <p>Access Token: @ah.AccessToken</p>
+    <p>Token Type: @ah.TokenType</p>
+    <p>Expires In: @ah.ExpiresIn</p>
+    <p>State: @ah.State</p>
+    <p>Error: @ah.Error</p>
+    <p>SpotifyWebAPI: @sp.S</p>
+    <p>SpotifyWebAPI.AccessToken: @sp.S.AccessToken</p>
+} else
+{
+    <a href="@AuthHelper.GetLoginLink()">Log in with Spotify</a>
+}
+
 
 @code {
 

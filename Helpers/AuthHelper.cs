@@ -11,19 +11,12 @@ namespace splaylist.Helpers
     {
 
         // Possible parameters after requesting a token
-        string _access_token = "";
-        string _token_type = "";
-        string _expires_in = "";
-        string _state = "";
-        string _error = "";
-        string _full_uri = "";
-
-        public string AccessToken { get { return _access_token; } }
-        public string TokenType { get { return _token_type; } }
-        public string ExpiresIn { get { return _expires_in; } }
-        public string State { get { return _state; } }
-        public string Error { get { return _error; } }
-        public string FullUri { get { return _full_uri; } }
+        public string AccessToken { get; private set; }
+        public string TokenType { get; private set; }
+        public string ExpiresIn { get; private set; }
+        public string State { get; private set; }
+        public string Error { get; private set; }
+        public string FullUri { get; private set; }
 
 
         string GenerateState()
@@ -40,7 +33,7 @@ namespace splaylist.Helpers
         }
 
         public bool SetLinkParams(string uriString) { 
-            _full_uri = uriString;
+            FullUri = uriString;
 
             // if successful callback, the link contains a "hash fragment" rather than a query string
             // meaning '#' needs to be replaced with '&' (kludge as it isn't correct syntax)
@@ -50,13 +43,13 @@ namespace splaylist.Helpers
 
             var parsed = QueryHelpers.ParseQuery(uriString);
 
-            _access_token = parsed.TryGetValue("access_token", out var access_token_sv) ? access_token_sv.First() : "";
-            _token_type = parsed.TryGetValue("token_type", out var token_type_sv) ? token_type_sv.First() : "";
-            _expires_in = parsed.TryGetValue("expires_in", out var expires_in_sv) ? expires_in_sv.First() : "";
-            _state = parsed.TryGetValue("state", out var state_sv) ? state_sv.First() : "";
-            _error = parsed.TryGetValue("error", out var error_sv) ? error_sv.First() : "";
+            AccessToken = parsed.TryGetValue("access_token", out var access_token_sv) ? access_token_sv.First() : "";
+            TokenType = parsed.TryGetValue("token_type", out var token_type_sv) ? token_type_sv.First() : "";
+            ExpiresIn = parsed.TryGetValue("expires_in", out var expires_in_sv) ? expires_in_sv.First() : "";
+            State = parsed.TryGetValue("state", out var state_sv) ? state_sv.First() : "";
+            Error = parsed.TryGetValue("error", out var error_sv) ? error_sv.First() : "";
 
-            if (_error != "") return false;
+            if (Error != "") return false;
             return true;
         }
 
