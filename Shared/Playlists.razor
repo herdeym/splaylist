@@ -6,64 +6,39 @@
 
 @using SpotifyAPI.Web
 @using SpotifyAPI.Web.Models
+@using  Blazorise.DataGrid
 
-<p>Response: @sp</p>
-
-<p>User: @pp</p>
-<p>UserID: @userID</p>
-<p>@sp.S.AccessToken</p>
+<p>User ID: @userID</p>
 
 
 @if (playlist_reader != null)
 {
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Owner</th>
-                <th>Track Count</th>
-                <th>Uri</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var playlist in playlist_reader.Items)
-            {
-                <tr>
-                    <td>@playlist.Name</td>
-                    <td>@playlist.Owner.DisplayName</td>
-                    <td>@playlist.Tracks.Total</td>
-                    <td>@playlist.Id</td>
-                </tr>
-            }
 
-        </tbody>
-    </table>
+    <DataGrid TItem="SimplePlaylist" Data="@playlist_reader.Items"  PageSize="50" class="table table-hover table-dark">
+        <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Name)" Caption="Name" AllowSort="true" />
+        <DataGridColumn TItem="SimplePlaylist" Field="Owner.DisplayName" Caption="User" AllowSort="true" />
+        <DataGridNumericColumn TItem="SimplePlaylist" Field="Tracks.Total" Caption="Tracks" AllowSort="true" />
+    </DataGrid>
+
 }
 else
 {
     <p>Playlists Not Loaded</p>
+    <p>Login: @sp.IsAuthenticated()</p>
 }
 
 @code {
 
-        PrivateProfile pp; // lol pp
-        string userID = "";
-        List<SimplePlaylist> parsed_playlists;
-        Paging<SimplePlaylist> playlist_reader;
+    PrivateProfile pp; // lol pp
+    string userID = "";
+    Paging<SimplePlaylist> playlist_reader;
 
     protected override async Task OnInitializedAsync()
     {
-
-
         pp = await sp.S.GetPrivateProfileAsync();
-
         userID = pp.Id;
-
-        parsed_playlists = new List<SimplePlaylist>();
-
+        
         // TODO - depaginate
-        playlist_reader = await sp.S.GetUserPlaylistsAsync(pp.Id, limit:50);
-
-
+        playlist_reader = await sp.S.GetUserPlaylistsAsync(pp.Id, limit: 50);
     }
 }
