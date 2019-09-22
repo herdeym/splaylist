@@ -1,10 +1,13 @@
 @page "/callback"
 
+@using Helpers
+@using SpotifyAPI.Web
+
 @inject HttpClient Http
 @inject NavigationManager UriHelper
 @inject AuthHelper ah
+@inject APIHelper  sp
 
-@using Helpers
 
 <a href="@AuthHelper.GetLoginLink()">Log in with Spotify</a>
 <p>@ah.FullUri</p>
@@ -13,12 +16,17 @@
 <p>Expires In: @ah.ExpiresIn</p>
 <p>State: @ah.State</p>
 <p>Error: @ah.Error</p>
+<p>SpotifyWebAPI: @sp.S</p>
+<p>SpotifyWebAPI.AccessToken: @sp.S.AccessToken</p>
 
 @code {
 
     protected override async Task OnInitializedAsync()
     {
-        ah.SetLinkParams(UriHelper.Uri);
+        if (ah.SetLinkParams(UriHelper.Uri))
+        {
+            sp.Authenticate(ah.AccessToken, ah.TokenType);
+        }
     }
 
 }

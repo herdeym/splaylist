@@ -2,14 +2,16 @@
 
 @using  Helpers
 @inject AuthHelper ah
+@inject APIHelper sp
 
 @using SpotifyAPI.Web
 @using SpotifyAPI.Web.Models
 
-<p>Response: @_spotify</p>
+<p>Response: @sp</p>
 
 <p>User: @pp</p>
 <p>UserID: @userID</p>
+<p>@sp.S.AccessToken</p>
 
 
 @if (playlist_reader != null)
@@ -19,6 +21,8 @@
             <tr>
                 <th>Name</th>
                 <th>Owner</th>
+                <th>Track Count</th>
+                <th>Uri</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +31,8 @@
                 <tr>
                     <td>@playlist.Name</td>
                     <td>@playlist.Owner.DisplayName</td>
+                    <td>@playlist.Tracks.Total</td>
+                    <td>@playlist.Id</td>
                 </tr>
             }
 
@@ -39,25 +45,25 @@ else
 }
 
 @code {
-    SpotifyWebAPI _spotify;
 
-    PrivateProfile pp; // lol pp
-    string userID = "";
-    Paging<SimplePlaylist> playlist_reader;
+        PrivateProfile pp; // lol pp
+        string userID = "";
+        List<SimplePlaylist> parsed_playlists;
+        Paging<SimplePlaylist> playlist_reader;
 
     protected override async Task OnInitializedAsync()
     {
-        _spotify = new SpotifyWebAPI()
-        {
-            AccessToken = ah.AccessToken,
-            TokenType = ah.TokenType
-        };
 
-        pp = await _spotify.GetPrivateProfileAsync();
+
+        pp = await sp.S.GetPrivateProfileAsync();
 
         userID = pp.Id;
 
-        playlist_reader = await _spotify.GetUserPlaylistsAsync(pp.Id);
+        parsed_playlists = new List<SimplePlaylist>();
+
+        // TODO - depaginate
+        playlist_reader = await sp.S.GetUserPlaylistsAsync(pp.Id, limit:50);
+
 
     }
 }

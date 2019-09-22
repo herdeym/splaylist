@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using splaylist.Helpers;
+using SpotifyAPI.Web;
 
 namespace splaylist
 {
@@ -12,8 +13,9 @@ namespace splaylist
         {
             services.AddSingleton<Config>();
 
-            // following line shouldn't necessarily be a singleton, but useful for testing / irrelevant in client Blazor
+            // following shouldn't necessarily be a singleton, but useful for testing / makes it easier in client Blazor
             services.AddSingleton<AuthHelper>();
+            services.AddSingleton<APIHelper>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)
