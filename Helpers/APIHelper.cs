@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using SpotifyAPI.Web.Models;
 
 namespace splaylist.Helpers
 {
@@ -18,6 +19,8 @@ namespace splaylist.Helpers
 
         public SpotifyWebAPI S { get; private set; }
 
+        public PrivateProfile UserProfile { get; private set; }
+
         public bool IsAuthenticated()
         {
             if (S == null) return false;
@@ -25,13 +28,15 @@ namespace splaylist.Helpers
             return true;
         }
 
-        public void Authenticate(string accessToken, string tokenType)
+        public async void Authenticate(string accessToken, string tokenType)
         {
             S = new SpotifyWebAPI()
             {
                 AccessToken = accessToken,
                 TokenType = tokenType
             };
+
+            UserProfile = await S.GetPrivateProfileAsync();
 
         }
 
