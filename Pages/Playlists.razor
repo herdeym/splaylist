@@ -3,6 +3,7 @@
 
 @inject AuthHelper ah
 @inject APIHelper sp
+@inject NavigationManager NavigationManager
 
 @using SpotifyAPI.Web
 @using SpotifyAPI.Web.Models
@@ -36,22 +37,36 @@ else
 }
 
 @code {
-    Paging<SimplePlaylist>
-    playlist_reader;
-    SimplePlaylist selectedPlaylist;
+        Paging<SimplePlaylist>  playlist_reader;
+
+    private SimplePlaylist _sp;
+
+
+    /// <summary>
+    /// Kludge as Blazorise.DataGrid.SelectedRowChanged does not work, navigate on change of databinding
+    /// </summary>
+    SimplePlaylist selectedPlaylist
+    {
+        get { return _sp; }
+        set
+        {
+                _sp = value;
+                NavigationManager.NavigateTo(SelectedPlaylistNavLink());
+            }
+        }
+
 
     protected override async Task OnInitializedAsync()
     {
-    // TODO - depaginate
-    playlist_reader = await sp.S.GetUserPlaylistsAsync(sp.UserProfile.Id, limit: 50);
+        // TODO - depaginate
+        playlist_reader = await sp.S.GetUserPlaylistsAsync(sp.UserProfile.Id, limit: 50);
     }
 
     string SelectedPlaylistNavLink()
     {
-        return "playlists/" + selectedPlaylist?.Id;
+        return "playlists/" + _sp?.Id;
     }
-    void OnPlaylistSelect()
-    {
-    Console.WriteLine(selectedPlaylist.Name);
-    }
-    }
+
+
+
+}
