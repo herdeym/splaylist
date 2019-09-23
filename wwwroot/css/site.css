@@ -46,12 +46,26 @@ app {
         font-size: 1.1rem;
     }
 
-    .sidebar .oi {
-        width: 2rem;
-        font-size: 1.1rem;
-        vertical-align: text-top;
-        top: -2px;
-    }
+
+/* Sidebar icons, used to be .sidbar .oi for open-iconic */
+.sidebar .fas  {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    /* top: -2px; */
+}
+
+.sidebar .fab  {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+}
+
+.sidebar .far {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+}
 
 .nav-item {
     font-size: 0.9rem;
