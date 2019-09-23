@@ -1,72 +1,57 @@
 ﻿@page  "/playlists"
 
-
-@inject AuthHelper ah
-@inject APIHelper sp
-@inject NavigationManager NavigationManager
-
-@using SpotifyAPI.Web
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
 @using splaylist.Helpers
 
-<p>User: @sp.UserProfile.DisplayName</p>
-<p>User ID: @sp.UserProfile.Id</p>
+@inject APIHelper api
+@inject NavigationManager NavigationManager
 
 
-<p>Playlist: <NavLink href="@SelectedPlaylistNavLink()" >@selectedPlaylist?.Name</NavLink></p>
 
+<p>User: @api.UserProfile.DisplayName</p>
+<p>User ID: @api.UserProfile.Id</p>
 
-@if (playlist_reader != null)
+@if (_playlistReader != null)
 {
-
-    <DataGrid TItem="SimplePlaylist" Data="@playlist_reader.Items" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@selectedPlaylist">
-        @*OnSelectedCommand="@OnPlaylistSelect()" > @* OnSelectedCommand according to Blazorise docs, may be an error in lib *@
+    <DataGrid TItem="SimplePlaylist" Data="@_playlistReader.Items" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@SelectedPlaylist">
         <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Name)" Caption="Name" AllowSort="true" />
         <DataGridColumn TItem="SimplePlaylist" Field="Owner.DisplayName" Caption="User" AllowSort="true" />
         <DataGridNumericColumn TItem="SimplePlaylist" Field="Tracks.Total" Caption="Tracks" AllowSort="true" />
-        <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Id)"></DataGridColumn>
-
+        <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Id)" Caption="ID" />
     </DataGrid>
-
 }
 else
 {
     <p>Playlists Not Loaded</p>
-    <p>Login: @sp.IsAuthenticated()</p>
+    <p>Login: @api.IsAuthenticated()</p>
 }
 
+
+
 @code {
-        Paging<SimplePlaylist>  playlist_reader;
-
-    private SimplePlaylist _sp;
-
+    Paging<SimplePlaylist> _playlistReader;
+    private SimplePlaylist _selectedPlaylist;
 
     /// <summary>
     /// Kludge as Blazorise.DataGrid.SelectedRowChanged does not work, navigate on change of databinding
     /// </summary>
-    SimplePlaylist selectedPlaylist
+    SimplePlaylist SelectedPlaylist
     {
-        get { return _sp; }
+        get { return _selectedPlaylist; }
         set
         {
-                _sp = value;
-                NavigationManager.NavigateTo(SelectedPlaylistNavLink());
-            }
+            _selectedPlaylist = value;
+            NavigationManager.NavigateTo("playlists/" + _selectedPlaylist?.Id);
         }
+    }
 
 
     protected override async Task OnInitializedAsync()
     {
         // TODO - depaginate
-        playlist_reader = await sp.S.GetUserPlaylistsAsync(sp.UserProfile.Id, limit: 50);
+        _playlistReader = await api.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
     }
-
-    string SelectedPlaylistNavLink()
-    {
-        return "playlists/" + _sp?.Id;
-    }
-
 
 
 }

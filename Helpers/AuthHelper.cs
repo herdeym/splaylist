@@ -63,7 +63,7 @@ namespace splaylist.Helpers
                 "&client_id=" + Config.ClientID +
                 "&redirect_uri=" + Config.CallbackURI +
                 "&scope=" + Config.Scopes +
-                "&show_dialog=true");
+                "&show_dialog=" + Config.ShowSpotifyPermissions.ToString());
         }
     }
 

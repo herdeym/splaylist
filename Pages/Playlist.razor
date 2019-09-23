@@ -1,10 +1,10 @@
 ﻿@page "/playlists/{id}"
+
 @using splaylist.Helpers
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
 
-@inject APIHelper sp
-
+@inject APIHelper api
 
 
 
@@ -15,11 +15,12 @@
     <DataGrid TItem="PlaylistTrack" Data="@loadedPlaylist.Tracks.Items" PageSize="50" class="table table-hover table-dark" >
         <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true" />
         <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true" />
+        @*<DataGridColumn TItem="PlaylistTrack" Field="@String.Join(", ", Track.Artists.Name)" Caption="Artists" AllowSort="true"/>*@
     </DataGrid>
 }
 else
 {
-    <p>Playlist could not be loaded</p>
+    <p>Loading...</p>
 }
 
 @code
@@ -33,7 +34,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        loadedPlaylist = await sp.S.GetPlaylistAsync(id);
+        loadedPlaylist = await api.S.GetPlaylistAsync(id);
     }
 
 }

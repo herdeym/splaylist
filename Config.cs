@@ -33,5 +33,7 @@ namespace splaylist
         public static string ClientID { get { return _clientID; } }
         public static string CallbackURI {  get { return _callbackURI; } }
         public static string Scopes { get { return _scopes; } }
+
+        public static bool ShowSpotifyPermissions = false;
     }
 }
