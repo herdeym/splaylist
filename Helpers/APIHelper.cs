@@ -28,7 +28,7 @@ namespace splaylist.Helpers
             return true;
         }
 
-        public async void Authenticate(string accessToken, string tokenType)
+        public async Task<bool> Authenticate(string accessToken, string tokenType)
         {
             S = new SpotifyWebAPI()
             {
@@ -37,6 +37,10 @@ namespace splaylist.Helpers
             };
 
             UserProfile = await S.GetPrivateProfileAsync();
+
+            // TODO - handle faulty logins
+            // this is mainly here so /callback waits for SpotifyWebAPI to be initialised before redirecting
+            return true;
 
         }
 

@@ -1,0 +1,35 @@
+@page "/callback"
+
+@using Helpers
+@using SpotifyAPI.Web
+
+@inject NavigationManager UriHelper
+@inject AuthHelper ah
+@inject APIHelper  api
+
+
+
+<p>@_loginMessage</p>
+
+
+
+@code {
+
+    string _loginMessage = "Loading...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ah.SetLinkParams(UriHelper.Uri))
+        {
+            await api.Authenticate(ah.AccessToken, ah.TokenType);
+            UriHelper.NavigateTo("playlists");
+
+        }
+        else
+        {
+            _loginMessage = "Login Failed...";
+        }
+
+    }
+
+}
