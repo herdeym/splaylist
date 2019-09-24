@@ -1,0 +1,4 @@
+[submodule "SpotifyAPI-NET"]
+	path = SpotifyAPI-NET
+	url = https://github.com/ajmck/SpotifyAPI-NET.git
+	branch = splaylist-custom
