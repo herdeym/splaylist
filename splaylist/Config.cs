@@ -8,7 +8,7 @@ namespace splaylist
 {
     public class Config
     {
-        private string _clientID = "I've honest to god spent hours trying to get user secrets or environmental variables working for this ID, hence the block being commented out below. If you're unfortunate enough to rip this project off github, replace this variable with a key from https://developer.spotify.com/dashboard/applications/";
+        private static string _clientID = "8061b5bc221041f39b7ef54c58113f09";
         private static string _callbackURI = "http://localhost:51660/callback";
 
         //private IConfiguration _config;
