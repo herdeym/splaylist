@@ -15,7 +15,13 @@
     <DataGrid TItem="PlaylistTrack" Data="@loadedPlaylist.Tracks.Items" PageSize="50" class="table table-hover table-dark" >
         <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true" />
         <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true" />
-        @*<DataGridColumn TItem="PlaylistTrack" Field="@String.Join(", ", Track.Artists.Name)" Caption="Artists" AllowSort="true"/>*@
+        <DataGridColumn TItem="PlaylistTrack" Field="Track.Artists" Caption="Artists" AllowSort="true">
+            <DisplayTemplate>
+                @* below line fails, prints name of object, need to retrieve .Artists.Name*@
+                @(PrintArtists(context as PlaylistTrack))
+            </DisplayTemplate>
+        </DataGridColumn>
+
     </DataGrid>
 }
 else
@@ -32,9 +38,21 @@ else
     FullPlaylist loadedPlaylist;
     PlaylistTrack single;
 
+
     protected override async Task OnInitializedAsync()
     {
         loadedPlaylist = await api.S.GetPlaylistAsync(id);
+
+    }
+
+    private string PrintArtists(PlaylistTrack p)
+    {
+        string result = "";
+        foreach (var artist in p.Track.Artists)
+        {
+            result += artist.Name;
+        }
+        return result;
     }
 
 }
