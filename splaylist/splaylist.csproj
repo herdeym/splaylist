@@ -10,16 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.8.5" />
-    <PackageReference Include="Blazorise.DataGrid" Version="0.8.5" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.8.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.0.0-preview9.19457.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="3.0.0-preview9.19457.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.0.0-preview9.19457.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.0.0-preview9.19457.4" PrivateAssets="all" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="0.8.6.1" />
+    <PackageReference Include="Blazorise.DataGrid" Version="0.8.6.1" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.8.6.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.0.0-preview9.19465.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" Version="3.0.0-preview9.19465.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.0.0-preview9.19465.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.0.0-preview9.19465.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0-rc1.19456.10" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.0-rc1.19456.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
