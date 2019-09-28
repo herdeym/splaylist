@@ -22,7 +22,8 @@
         if (ah.SetLinkParams(UriHelper.Uri))
         {
             await api.Authenticate(ah.AccessToken, ah.TokenType);
-            UriHelper.NavigateTo("playlists");
+            _loginMessage = UriHelper.Uri;
+            // UriHelper.NavigateTo("playlists");
 
         }
         else
