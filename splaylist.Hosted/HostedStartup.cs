@@ -30,7 +30,8 @@ namespace splaylist.Hosted
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor()
+                .AddCircuitOptions(o => { o.DetailedErrors = true; });
 
 
 
