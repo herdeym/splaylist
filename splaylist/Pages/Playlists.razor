@@ -54,7 +54,7 @@ else
         // TODO - depaginate
         var firstPage = await api.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
         //playlistContents = firstPage.Items;
-        playlistContents = Depaginater<SimplePlaylist>.Depage(firstPage);
+        playlistContents = Depaginater<SimplePlaylist>.Depage(firstPage, api.S);
     }
 
 

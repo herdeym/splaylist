@@ -3,6 +3,7 @@
 @using splaylist.Helpers
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
+@using SpotifyAPI.Web.Helpers;
 
 @inject APIHelper api
 
@@ -12,21 +13,29 @@
 {
     <h2>@loadedPlaylist.Name</h2>
 
-    <DataGrid TItem="PlaylistTrack" Data="@loadedPlaylist.Tracks.Items" PageSize="50" class="table table-hover table-dark" >
-        <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true" />
-        <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true" />
-        <DataGridColumn TItem="PlaylistTrack" Field="Track.Artists" Caption="Artists" AllowSort="true">
-            <DisplayTemplate>
-                @* below line fails, prints name of object, need to retrieve .Artists.Name*@
-                @(PrintArtists(context as PlaylistTrack))
-            </DisplayTemplate>
-        </DataGridColumn>
+    @if (playlistContents != null)
+    {
+        @* HACK - PageSize ought to be unlimited, but leaving the parameter out will cap it at 5
+            Spotify playlists are capped at 10000 so this shouldn't become an issue *@
+        <DataGrid TItem="PlaylistTrack" Data="@playlistContents" PageSize="10000" class="table table-hover table-dark">
+            <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true"/>
+            <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true"/>
+            <DataGridColumn TItem="PlaylistTrack" Field="Track.Artists" Caption="Artists" AllowSort="true">
+                <DisplayTemplate>
+                    @* below line fails, prints name of object, need to retrieve .Artists.Name*@
+                    @(PrintArtists(context as PlaylistTrack))
+                </DisplayTemplate>
+            </DataGridColumn>
 
-    </DataGrid>
+        </DataGrid>
+    } else
+    {
+        <p>Loading Contents...</p>
+    }
 }
 else
 {
-    <p>Loading...</p>
+    <p>Loading Playlist...</p>
 }
 
 @code
@@ -37,11 +46,14 @@ else
 
     FullPlaylist loadedPlaylist;
     PlaylistTrack single;
-
+    List<PlaylistTrack> playlistContents;
 
     protected override async Task OnInitializedAsync()
     {
         loadedPlaylist = await api.S.GetPlaylistAsync(id);
+        var trackPager = loadedPlaylist.Tracks;
+        playlistContents = Depaginater<PlaylistTrack>.Depage(trackPager, api.S);
+
 
     }
 
