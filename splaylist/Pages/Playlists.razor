@@ -3,6 +3,7 @@
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
 @using splaylist.Helpers
+@using SpotifyAPI.Web.Helpers
 
 @inject APIHelper api
 @inject NavigationManager NavigationManager
@@ -12,9 +13,9 @@
 <p>User: @api.UserProfile.DisplayName</p>
 <p>User ID: @api.UserProfile.Id</p>
 
-@if (_playlistReader != null)
+@if (playlistContents != null)
 {
-    <DataGrid TItem="SimplePlaylist" Data="@_playlistReader.Items" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@SelectedPlaylist">
+    <DataGrid TItem="SimplePlaylist" Data="@playlistContents" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@SelectedPlaylist">
         <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Name)" Caption="Name" AllowSort="true" />
         <DataGridColumn TItem="SimplePlaylist" Field="Owner.DisplayName" Caption="User" AllowSort="true" />
         <DataGridNumericColumn TItem="SimplePlaylist" Field="Tracks.Total" Caption="Tracks" AllowSort="true" />
@@ -30,8 +31,9 @@ else
 
 
 @code {
-    Paging<SimplePlaylist> _playlistReader;
+
     private SimplePlaylist _selectedPlaylist;
+    List<SimplePlaylist> playlistContents = new List<SimplePlaylist>();
 
     /// <summary>
     /// Kludge as Blazorise.DataGrid.SelectedRowChanged does not work, navigate on change of databinding
@@ -50,7 +52,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         // TODO - depaginate
-        _playlistReader = await api.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
+        var firstPage = await api.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
+        //playlistContents = firstPage.Items;
+        playlistContents = Depaginater<SimplePlaylist>.Depage(firstPage);
     }
 
 
