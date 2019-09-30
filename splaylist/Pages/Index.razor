@@ -1,7 +1,22 @@
 ﻿@page "/"
 
-<h2>Spotify Playlist Sorter</h2>
-<p>There's a lot of meticulous data Spotify holds about music, all available through their developer API. 
-    While there are <a href="https://developer.spotify.com/discover/" target="_blank">a lot of great sites</a> to browse and explore this data, I still needed help to sort out my music library.</p>
+@using splaylist.Helpers
 
-<p>Very early development right now, using the Blazor framework (affirming my hatred / lack of knowledge about JavaScript).</p>
+<!-- HTML derived from https://html5up.net/hyperspace -->
+
+<div id="wrapper">
+<section id="intro" class="wrapper fullscreen">
+    <div class="inner">
+        <h1>Spotify Playlist Sorter</h1>
+        <p>Enhance your playlists with Spotify's <a href="https://developer.spotify.com/discover/" target="_blank">detailed API.</a><br />
+        Project in development; things will be incomplete or broken.</p>
+        <ul class="actions">
+            <li><a href="@AuthHelper.GetLoginLink()" class="button" style="background-color: #1c7d2f;">Log In with Spotify</a></li>
+        </ul>
+
+    </div>
+
+</section>
+
+</div>
+
