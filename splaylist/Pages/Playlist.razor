@@ -1,5 +1,6 @@
 ﻿@page "/playlists/{id}"
 
+@using System.Timers
 @using splaylist.Helpers
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
@@ -8,52 +9,69 @@
 @inject APIHelper api
 
 
-
-@if (loadedPlaylist != null)
-{
-    <h2>@loadedPlaylist.Name</h2>
-
-    @if (playlistContents != null)
-    {
-        @* HACK - PageSize ought to be unlimited, but leaving the parameter out will cap it at 5
-            Spotify playlists are capped at 10000 so this shouldn't become an issue *@
-        <DataGrid TItem="PlaylistTrack" Data="@playlistContents" PageSize="10000" class="table table-hover table-dark">
-            <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true"/>
-            <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true"/>
-            <DataGridColumn TItem="PlaylistTrack" Field="Track.Artists" Caption="Artists" AllowSort="true">
-                <DisplayTemplate>
-                    @* below line fails, prints name of object, need to retrieve .Artists.Name*@
-                    @(PrintArtists(context as PlaylistTrack))
-                </DisplayTemplate>
-            </DataGridColumn>
-
-        </DataGrid>
-    } else
-    {
-        <p>Loading Contents...</p>
-    }
-}
-else
+<RefreshableComponent Interval="500" Enabled="@_isLoading">
+@if (loadedPlaylist == null)
 {
     <p>Loading Playlist...</p>
 }
+else
+{
+    <h2>@loadedPlaylist.Name</h2>
+
+    @if (_depager == null)
+    {
+        <p>Loading Contents...</p>
+    }
+    else
+    {
+        @if (_depagedResults == null)
+        {
+            <p>Loaded @_depager.LoadedCount out of @_depager.AvailableCount tracks.</p>
+        }
+        else
+        {
+            /* HACK - PageSize ought to be unlimited, but leaving the parameter out will cap it at 5
+            Spotify playlists are capped at 10000 so this shouldn't become an issue */
+            <DataGrid TItem="PlaylistTrack" Data="@_depagedResults" PageSize="10000" class="table table-hover table-dark">
+                <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true"/>
+                <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true"/>
+                <DataGridColumn TItem="PlaylistTrack" Field="Track.Artists" Caption="Artists" AllowSort="false">   
+                    @* AllowSort="true" fails on artists as we're only changing the display template, not the actual list of artists *@
+                    <DisplayTemplate>
+                        @PrintArtists(context as PlaylistTrack)
+                    </DisplayTemplate>
+                </DataGridColumn>
+            </DataGrid>
+
+        }
+    }
+}
+</RefreshableComponent>
 
 @code
 {
+    private bool _isLoading = true;
+
 
     [Parameter]
     public string id { get; set; }
 
     FullPlaylist loadedPlaylist;
     PlaylistTrack single;
-    List<PlaylistTrack> playlistContents;
+    List<PlaylistTrack> _depagedResults;
+
+    Depaginator<PlaylistTrack> _depager;
+
+    
 
     protected override async Task OnInitializedAsync()
     {
+        _depager = new Depaginator<PlaylistTrack>(api.S); 
+
         loadedPlaylist = await api.S.GetPlaylistAsync(id);
         var trackPager = loadedPlaylist.Tracks;
-        playlistContents = Depaginater<PlaylistTrack>.Depage(trackPager, api.S);
-
+        _depagedResults = await _depager.Depage(trackPager);
+        // done = true;
 
     }
 

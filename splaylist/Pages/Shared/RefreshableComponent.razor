@@ -1,0 +1,59 @@
+﻿@*
+Refreshes the child component on a timed interval.
+    
+Used when a playlist etc is being loaded, and the relevant information is kept in an object rather than in the razor page.
+*@
+
+@using System.Threading
+
+
+@ChildContent
+
+
+@code
+{
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+
+    /// <summary>
+    /// Set to true if the component needs refreshed.
+    /// </summary>
+    [Parameter]
+    public bool Enabled { get; set; }
+
+
+    /// <summary>
+    /// Set the interval of the timer
+    /// </summary>
+    [Parameter]
+    public int Interval { get; set; }
+
+
+    private Timer _timer;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _timer = new Timer((_ => this.InvokeAsync(StateHasChanged)), null, Interval, Interval);
+
+    }
+
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (Enabled)
+        {
+            // assumes this also refreshes the child component
+            _timer.Change(Interval, Interval);
+        }
+        else
+        {
+            _timer.Dispose();
+        }
+
+        return base.OnParametersSetAsync();
+    }
+
+}
