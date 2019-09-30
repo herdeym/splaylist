@@ -1,13 +1,5 @@
 ﻿/* Following carefully selected and pilfered from html5up.net/hyperspace for homepage */
 /* I solemnly swear I'll learn SASS and fix this later */
-.wrapper h1, h2, h3, p, a, ol, ul, li, section {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
 
 .wrapper ol, ul {
     list-style: none;
@@ -210,7 +202,7 @@ ul.actions {
 
 
 /* Button */
-
+#homepage
 input[type="submit"],
 input[type="reset"],
 input[type="button"],
@@ -233,7 +225,7 @@ button,
     display: inline-block;
     font-size: 0.6em;
     font-weight: bold;
-    height: calc(4.75em + 2px);
+    /* height: calc(4.75em + 2px); */ /* this one breaks the mobile navbar */
     letter-spacing: 0.25em;
     line-height: 4.75em;
     outline: 0;
@@ -244,7 +236,7 @@ button,
     text-transform: uppercase;
     white-space: nowrap;
 }
-
+#homepage
     input[type="submit"]:after,
     input[type="reset"]:after,
     input[type="button"]:after,
@@ -270,6 +262,7 @@ button,
         width: 100%;
     }
 
+    #homepage
     input[type="submit"].icon:before,
     input[type="reset"].icon:before,
     input[type="button"].icon:before,
@@ -278,6 +271,7 @@ button,
         margin-right: 0.75em;
     }
 
+    #homepage
     input[type="submit"].fit,
     input[type="reset"].fit,
     input[type="button"].fit,
@@ -286,6 +280,7 @@ button,
         width: 100%;
     }
 
+    #homepage
     input[type="submit"].small,
     input[type="reset"].small,
     input[type="button"].small,
@@ -294,10 +289,15 @@ button,
         font-size: 0.4em;
     }
 
+    #homepage
     input[type="submit"].large,
     input[type="reset"].large,
     input[type="button"].large,
     button.large,
     .button.large {
         font-size: 0.8em;
+    }
+
+    #homepage a {
+        color: white;
     }

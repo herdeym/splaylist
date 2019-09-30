@@ -19,7 +19,6 @@
         <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Name)" Caption="Name" AllowSort="true" />
         <DataGridColumn TItem="SimplePlaylist" Field="Owner.DisplayName" Caption="User" AllowSort="true" />
         <DataGridNumericColumn TItem="SimplePlaylist" Field="Tracks.Total" Caption="Tracks" AllowSort="true" />
-        <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Id)" Caption="ID" />
     </DataGrid>
 }
 else

@@ -77,10 +77,12 @@ else
 
     private string PrintArtists(PlaylistTrack p)
     {
-        string result = "";
-        foreach (var artist in p.Track.Artists)
+        string result = p.Track?.Artists[0]?.Name;
+
+        // if more than one artist, add seperator
+        for (int i = 1; i < p.Track?.Artists.Count; i++)
         {
-            result += artist.Name;
+            result += "; " + p.Track?.Artists[i].Name;
         }
         return result;
     }

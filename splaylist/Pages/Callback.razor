@@ -20,9 +20,10 @@
         if (ah.SetLinkParams(UriHelper.Uri))
         {
             await api.Authenticate(ah.AccessToken, ah.TokenType);
-            _loginMessage = "Logged in!";
+
 
             if (api.IsAuthenticated()) { 
+                _loginMessage = "Logged in!";
                 // Without this check, navigating to playlists can cause a NullReferenceException
                 UriHelper.NavigateTo("playlists");
             }
