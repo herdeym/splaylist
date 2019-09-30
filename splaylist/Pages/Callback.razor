@@ -8,22 +8,24 @@
 @inject APIHelper  api
 
 
-
 <p>@_loginMessage</p>
-
 
 
 @code {
 
-    string _loginMessage = "Loading...";
+    string _loginMessage = "Logging in...";
 
     protected override async Task OnInitializedAsync()
     {
         if (ah.SetLinkParams(UriHelper.Uri))
         {
             await api.Authenticate(ah.AccessToken, ah.TokenType);
-            _loginMessage = UriHelper.Uri;
-            // UriHelper.NavigateTo("playlists");
+            _loginMessage = "Logged in!";
+
+            if (api.IsAuthenticated()) { 
+                // Without this check, navigating to playlists can cause a NullReferenceException
+                UriHelper.NavigateTo("playlists");
+            }
 
         }
         else
