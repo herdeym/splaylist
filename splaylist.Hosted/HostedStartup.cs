@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using splaylist.Helpers;
+using splaylist.Models;
 
 namespace splaylist.Hosted
 {
@@ -37,8 +38,9 @@ namespace splaylist.Hosted
 
             services.AddSingleton<Config>();
             // following shouldn't necessarily be a singleton, but useful for testing / makes it easier in client Blazor
-            services.AddSingleton<AuthHelper>();
-            services.AddSingleton<APIHelper>();
+            services.AddSingleton<Auth>();
+            services.AddSingleton<API>();
+            services.AddSingleton<Cache>();
 
             services
                 .AddBlazorise(options =>

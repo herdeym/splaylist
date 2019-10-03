@@ -14,7 +14,7 @@ namespace splaylist.Helpers
     /// 
     /// Can't use SpotifyWebAPI as a singleton directly due to the need to initialise it with the access token.
     /// </summary>
-    public class APIHelper
+    public class API
     {
 
         public static SpotifyWebAPI S { get; private set; }

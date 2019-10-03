@@ -4,7 +4,7 @@
 @using  Blazorise.DataGrid
 @using splaylist.Helpers
 
-@inject APIHelper api
+@inject API api
 @inject NavigationManager NavigationManager
 
 
@@ -50,7 +50,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         // TODO - depaginate
-        var firstPage = await APIHelper.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
+        var firstPage = await API.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
         //playlistContents = firstPage.Items;
         var dep = new Depaginator<SimplePlaylist>();
         playlistContents = await dep.Depage(firstPage);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace splaylist.Helpers
 {
-    public class AuthHelper
+    public class Auth
     {
 
         // Possible parameters after requesting a token

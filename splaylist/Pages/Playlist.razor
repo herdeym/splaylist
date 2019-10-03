@@ -5,7 +5,7 @@
 @using  Blazorise.DataGrid
 @using splaylist.Models
 
-@inject APIHelper api
+@inject API api
 
 <button @onclick="Refresh">Refresh</button>
 <RefreshableComponent Interval="500" Enabled="@_isLoading">
@@ -48,8 +48,10 @@ else
 
 @code
 {
+    /// <summary>
+    /// Use this while all track info is yet to finish
+    /// </summary>
     private bool _isLoading = true;
-
 
     [Parameter]
     public string id { get; set; }
@@ -68,7 +70,7 @@ else
     {
         _depager = new Depaginator<PlaylistTrack>();
 
-        loadedPlaylist = await APIHelper.S.GetPlaylistAsync(id);
+        loadedPlaylist = await API.S.GetPlaylistAsync(id);
         var trackPager = loadedPlaylist.Tracks;
         _depagedResults = await _depager.Depage(trackPager);
 

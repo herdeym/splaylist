@@ -1,8 +1,8 @@
 ﻿@using splaylist.Helpers
 @inherits LayoutComponentBase
 
-@inject AuthHelper Auth
-@inject APIHelper API
+@inject Auth Auth
+@inject API API
 
 <div class="sidebar">
     <div class="top-row pl-4 navbar navbar-dark">
@@ -42,7 +42,7 @@
     <div class="top-row px-4">
         @if (!API.IsAuthenticated())
         {
-            <a href="@AuthHelper.GetLoginLink()" class="ml-md-auto">Log In with Spotify</a>
+            <a href="@Auth.GetLoginLink()" class="ml-md-auto">Log In with Spotify</a>
         }
         else
         {

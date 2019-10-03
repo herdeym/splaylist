@@ -22,6 +22,8 @@ namespace splaylist.Models
         {
             OriginalTrack = fullTrack;
             Artists = CreateArtistString(fullTrack);
+
+            
         }
 
 
@@ -77,14 +79,14 @@ namespace splaylist.Models
 
         public async void LoadFullAlbum()
         {
-            FullAlbum = await APIHelper.S.GetAlbumAsync(OriginalTrack.Album.Id);
+            FullAlbum = await API.S.GetAlbumAsync(OriginalTrack.Album.Id);
             //GenreString = CreateGenreString(FullAlbum);
         }
 
         public async void LoadFullArtist()
         {
             // throw new NotImplementedException();
-            FullArtist = await APIHelper.S.GetArtistAsync(OriginalTrack.Artists[0].Id);
+            FullArtist = await API.S.GetArtistAsync(OriginalTrack.Artists[0].Id);
             Genres = FullArtist.Genres;
             GenreString = CreateGenreString(FullArtist);
         }

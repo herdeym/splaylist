@@ -44,7 +44,7 @@ namespace splaylist.Helpers
             // then iterate over all the next pages
             while (page.HasNextPage())
             {
-                page = await APIHelper.S.GetNextPageAsync(page);
+                page = await API.S.GetNextPageAsync(page);
                 ProgressItems.AddRange(page.Items);
                 LoadedCount = ProgressItems.Count;
             }
@@ -52,7 +52,7 @@ namespace splaylist.Helpers
             // Handle previous pages if supplied page parameter was not the first page
             while (passedPage.HasPreviousPage())
             {
-                passedPage = await APIHelper.S.GetPreviousPageAsync(passedPage);
+                passedPage = await API.S.GetPreviousPageAsync(passedPage);
                 ProgressItems.AddRange(passedPage.Items);
                 LoadedCount = ProgressItems.Count;
             }
