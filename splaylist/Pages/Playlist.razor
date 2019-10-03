@@ -4,6 +4,7 @@
 @using splaylist.Helpers
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
+@using splaylist.Models
 @using SpotifyAPI.Web.Helpers;
 
 @inject APIHelper api
@@ -24,7 +25,7 @@ else
     }
     else
     {
-        @if (_depagedResults == null)
+        @if (_results == null)
         {
             <p>Loaded @_depager.LoadedCount out of @_depager.AvailableCount tracks.</p>
         }
@@ -32,15 +33,12 @@ else
         {
             /* HACK - PageSize ought to be unlimited, but leaving the parameter out will cap it at 5
             Spotify playlists are capped at 10000 so this shouldn't become an issue */
-            <DataGrid TItem="PlaylistTrack" Data="@_depagedResults" PageSize="10000" class="table table-hover table-dark">
-                <DataGridColumn TItem="PlaylistTrack" Field="Track.Name" Caption="Name" AllowSort="true"/>
-                <DataGridColumn TItem="PlaylistTrack" Field="Track.Album.Name" Caption="Album" AllowSort="true"/>
-                <DataGridColumn TItem="PlaylistTrack" Field="Track.Artists" Caption="Artists" AllowSort="false">   
-                    @* AllowSort="true" fails on artists as we're only changing the display template, not the actual list of artists *@
-                    <DisplayTemplate>
-                        @PrintArtists(context as PlaylistTrack)
-                    </DisplayTemplate>
-                </DataGridColumn>
+
+            
+            <DataGrid TItem="TrackWithSelect" Data="@_results" PageSize="10000" class="table table-hover table-dark">
+                <DataGridColumn TItem="TrackWithSelect" Field="TrackTitle" Caption="Name" AllowSort="true"/>
+                <DataGridColumn TItem="TrackWithSelect" Field="Album" Caption="Album" AllowSort="true"/>
+                <DataGridColumn TItem="TrackWithSelect" Field="Artists" Caption="Artists" AllowSort="true" />   
             </DataGrid>
 
         }
@@ -60,17 +58,28 @@ else
     PlaylistTrack single;
     List<PlaylistTrack> _depagedResults;
 
+    List<TrackWithSelect> _results;
+
     Depaginator<PlaylistTrack> _depager;
 
-    
+
 
     protected override async Task OnInitializedAsync()
     {
-        _depager = new Depaginator<PlaylistTrack>(api.S); 
+        _depager = new Depaginator<PlaylistTrack>(APIHelper.S);
 
-        loadedPlaylist = await api.S.GetPlaylistAsync(id);
+        loadedPlaylist = await APIHelper.S.GetPlaylistAsync(id);
         var trackPager = loadedPlaylist.Tracks;
         _depagedResults = await _depager.Depage(trackPager);
+
+
+        _results = new List<TrackWithSelect>();
+        foreach (var track in _depagedResults)
+        {
+            _results.Add(new TrackWithSelect(track.Track));
+        }
+
+
         // done = true;
 
     }

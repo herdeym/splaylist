@@ -17,7 +17,7 @@ namespace splaylist.Helpers
     public class APIHelper
     {
 
-        public SpotifyWebAPI S { get; private set; }
+        public static SpotifyWebAPI S { get; private set; }
 
         public PrivateProfile UserProfile { get; private set; }
 
