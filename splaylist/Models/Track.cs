@@ -30,6 +30,10 @@ namespace splaylist.Models
 
         public string Artists { get; protected set; }
 
+
+        // todo - fix for precision
+        public string AlbumDate => OriginalTrack.Album.ReleaseDate;
+
         
 
         /// Because FullArtist has fewer extra fields than FullArtist, prefer FullArtist for Genre info.
@@ -56,17 +60,33 @@ namespace splaylist.Models
             return result;
         }
 
+        public static string CreateGenreString(FullArtist fa)
+        {
+            if (fa == null) return "";
+            if (fa.Genres.Count == 0) return "";
 
+            string result = fa?.Genres[0];
+            for (int i = 1; i < fa?.Genres.Count; i++)
+            {
+                result += "; " + fa?.Genres[i];
+            }
+
+            return result;
+        }
 
 
         public async void LoadFullAlbum()
         {
-            FullAlbum = await APIHelper.S.GetAlbumAsync(OriginalTrack.Id);
+            FullAlbum = await APIHelper.S.GetAlbumAsync(OriginalTrack.Album.Id);
+            //GenreString = CreateGenreString(FullAlbum);
         }
 
         public async void LoadFullArtist()
         {
-            FullArtist = await APIHelper.S.GetArtistAsync(OriginalTrack.Id);
+            // throw new NotImplementedException();
+            FullArtist = await APIHelper.S.GetArtistAsync(OriginalTrack.Artists[0].Id);
+            Genres = FullArtist.Genres;
+            GenreString = CreateGenreString(FullArtist);
         }
     
     }

@@ -3,7 +3,6 @@
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
 @using splaylist.Helpers
-@using SpotifyAPI.Web.Helpers
 
 @inject APIHelper api
 @inject NavigationManager NavigationManager
@@ -53,7 +52,7 @@ else
         // TODO - depaginate
         var firstPage = await APIHelper.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
         //playlistContents = firstPage.Items;
-        var dep = new Depaginator<SimplePlaylist>(APIHelper.S);
+        var dep = new Depaginator<SimplePlaylist>();
         playlistContents = await dep.Depage(firstPage);
     }
 

@@ -1,15 +1,13 @@
 ﻿@page "/playlists/{id}"
 
-@using System.Timers
 @using splaylist.Helpers
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
 @using splaylist.Models
-@using SpotifyAPI.Web.Helpers;
 
 @inject APIHelper api
 
-
+<button @onclick="Refresh">Refresh</button>
 <RefreshableComponent Interval="500" Enabled="@_isLoading">
 @if (loadedPlaylist == null)
 {
@@ -25,7 +23,7 @@ else
     }
     else
     {
-        @if (_results == null)
+        @if (_isLoading)
         {
             <p>Loaded @_depager.LoadedCount out of @_depager.AvailableCount tracks.</p>
         }
@@ -35,11 +33,13 @@ else
             Spotify playlists are capped at 10000 so this shouldn't become an issue */
 
             
-            <DataGrid TItem="TrackWithSelect" Data="@_results" PageSize="10000" class="table table-hover table-dark">
-                <DataGridColumn TItem="TrackWithSelect" Field="TrackTitle" Caption="Name" AllowSort="true"/>
-                <DataGridColumn TItem="TrackWithSelect" Field="Album" Caption="Album" AllowSort="true"/>
-                <DataGridColumn TItem="TrackWithSelect" Field="Artists" Caption="Artists" AllowSort="true" />   
-            </DataGrid>
+<DataGrid TItem="TrackWithSelect" Data="@_results" PageSize="10000" class="table table-hover table-dark">
+    <DataGridColumn TItem="TrackWithSelect" Field="TrackTitle" Caption="Name" AllowSort="true" />
+    <DataGridColumn TItem="TrackWithSelect" Field="Album" Caption="Album" AllowSort="true" />
+    <DataGridColumn TItem="TrackWithSelect" Field="Artists" Caption="Artists" AllowSort="true" />
+    <DataGridColumn TItem="TrackWithSelect" Field="AlbumDate" Caption="Release Date" AllowSort="true" />
+    <DataGridColumn TItem="TrackWithSelect" Field="GenreString" Caption="Genre" AllowSort="true" />
+</DataGrid>
 
         }
     }
@@ -66,7 +66,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _depager = new Depaginator<PlaylistTrack>(APIHelper.S);
+        _depager = new Depaginator<PlaylistTrack>();
 
         loadedPlaylist = await APIHelper.S.GetPlaylistAsync(id);
         var trackPager = loadedPlaylist.Tracks;
@@ -76,24 +76,19 @@ else
         _results = new List<TrackWithSelect>();
         foreach (var track in _depagedResults)
         {
-            _results.Add(new TrackWithSelect(track.Track));
+            var tws = new TrackWithSelect(track.Track);
+            tws.LoadFullArtist();
+            _results.Add(tws);
         }
 
-
-        // done = true;
+        _isLoading = false;
 
     }
 
-    private string PrintArtists(PlaylistTrack p)
-    {
-        string result = p.Track?.Artists[0]?.Name;
 
-        // if more than one artist, add seperator
-        for (int i = 1; i < p.Track?.Artists.Count; i++)
-        {
-            result += "; " + p.Track?.Artists[i].Name;
-        }
-        return result;
+    protected void Refresh()
+    {
+        Console.WriteLine(_results);
     }
 
 }
