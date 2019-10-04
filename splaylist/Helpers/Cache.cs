@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using splaylist.Helpers;
 using SpotifyAPI.Web.Models;
 
 namespace splaylist.Models
@@ -18,12 +19,15 @@ namespace splaylist.Models
         public static Dictionary<string, FullTrack> FullTracks;
 
         // Simple ones which are waiting to be downloaded
-        private static Dictionary<string, SimpleAlbum> _pendingAlbums;
-        private static Dictionary<String, SimpleArtist> _pendingArtists;
+        internal static Dictionary<string, SimpleAlbum> PendingAlbums;
+        internal static Dictionary<String, SimpleArtist> PendingArtists;
 
         // splaylist's custom objects
         public static Dictionary<string, Track> Tracks;
         public static Dictionary<string, FullPlaylist> FullPlaylists;
+
+        // A user's loaded playlists
+        public static List<SimplePlaylist> LoadedPlaylists;
 
         public Cache()
         {
@@ -33,8 +37,8 @@ namespace splaylist.Models
             FullAlbums = new Dictionary<string, FullAlbum>();
             FullTracks = new Dictionary<string, FullTrack>();
 
-            _pendingArtists = new Dictionary<string, SimpleArtist>();
-            _pendingAlbums = new Dictionary<string, SimpleAlbum>();
+            PendingArtists = new Dictionary<string, SimpleArtist>();
+            PendingAlbums = new Dictionary<string, SimpleAlbum>();
 
             Tracks = new Dictionary<string, Track>();
             FullPlaylists = new Dictionary<string, FullPlaylist>();
@@ -42,32 +46,32 @@ namespace splaylist.Models
 
 // Simple / full artists / albums
 // Simple ones can be replaced with full after an API request
-        public void Save(SimpleArtist sa)
+        public static void Save(SimpleArtist sa)
         {
             SimpleArtists.Add(sa.Id, sa);
-            _pendingArtists.Add(sa.Id, sa);
+            PendingArtists.Add(sa.Id, sa);
         }
 
 
-        public void Save(FullArtist fa)
+        public static void Save(FullArtist fa)
         {
             FullArtists.Add(fa.Id, fa);
         }
 
 
-        public void Save(SimpleAlbum sa)
+        public static void Save(SimpleAlbum sa)
         {
             SimpleAlbums.Add(sa.Id, sa);
-            _pendingAlbums.Add(sa.Id, sa);
+            PendingAlbums.Add(sa.Id, sa);
         }
 
-        public void Save(FullAlbum fa)
+        public static void Save(FullAlbum fa)
         {
             FullAlbums.Add(fa.Id, fa);
         }
 
         // Tracks - come with simple information which must be added
-        public void Save(FullTrack fa)
+        public static void Save(FullTrack fa)
         {
             FullTracks.Add(fa.Id, fa);
             Save(fa.Album);
@@ -80,12 +84,11 @@ namespace splaylist.Models
         }
 
 
-        public void Save(FullPlaylist fp)
+        public static void Save(FullPlaylist fp)
         {
             FullPlaylists.Add(fp.Id, fp);
         }
 
-
-
+        
     }
 }

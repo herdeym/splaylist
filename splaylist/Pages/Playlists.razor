@@ -3,18 +3,19 @@
 @using SpotifyAPI.Web.Models
 @using  Blazorise.DataGrid
 @using splaylist.Helpers
+@using splaylist.Models
 
 @inject API api
 @inject NavigationManager NavigationManager
-
+@inject Cache Cache
 
 
 <p>User: @api.UserProfile.DisplayName</p>
 <p>User ID: @api.UserProfile.Id</p>
 
-@if (playlistContents != null)
+@if (Cache.LoadedPlaylists != null)
 {
-    <DataGrid TItem="SimplePlaylist" Data="@playlistContents" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@SelectedPlaylist">
+    <DataGrid TItem="SimplePlaylist" Data="@Cache.LoadedPlaylists" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@SelectedPlaylist">
         <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Name)" Caption="Name" AllowSort="true" />
         <DataGridColumn TItem="SimplePlaylist" Field="Owner.DisplayName" Caption="User" AllowSort="true" />
         <DataGridNumericColumn TItem="SimplePlaylist" Field="Tracks.Total" Caption="Tracks" AllowSort="true" />
@@ -22,8 +23,7 @@
 }
 else
 {
-    <p>Playlists Not Loaded</p>
-    <p>Login: @api.IsAuthenticated()</p>
+    <p>Loading Playlists...</p>
 }
 
 
@@ -31,7 +31,6 @@ else
 @code {
 
     private SimplePlaylist _selectedPlaylist;
-    List<SimplePlaylist> playlistContents = new List<SimplePlaylist>();
 
     /// <summary>
     /// Kludge as Blazorise.DataGrid.SelectedRowChanged does not work, navigate on change of databinding
@@ -53,7 +52,7 @@ else
         var firstPage = await API.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
         //playlistContents = firstPage.Items;
         var dep = new Depaginator<SimplePlaylist>();
-        playlistContents = await dep.Depage(firstPage);
+        Cache.LoadedPlaylists = await dep.Depage(firstPage);
     }
 
 
