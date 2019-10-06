@@ -42,7 +42,27 @@ namespace splaylist.Models
         /// OTOH, a track will only have one album to get genre from, but multiple artists.
 
         public FullArtist FullArtist { get; protected set; }
-        public FullAlbum FullAlbum { get; protected set; }
+
+        private FullAlbum _fullAlbum;
+
+        public FullAlbum FullAlbum
+        {
+            get
+            {
+                // if the fullAlbum has already been set for this track, return it
+                if (_fullAlbum != null) return _fullAlbum;
+
+                // else, see if the full album is in the cache
+                FullAlbum cacheresult;
+                if (Cache.FullAlbums.TryGetValue(OriginalTrack.Album.Id, out cacheresult))
+                {
+                    _fullAlbum = cacheresult;
+                    return _fullAlbum;
+                }
+
+                return null;
+            }
+        }
 
         public List<string> Genres;
 
@@ -74,13 +94,6 @@ namespace splaylist.Models
             }
 
             return result;
-        }
-
-
-        public async void LoadFullAlbum()
-        {
-            FullAlbum = await API.S.GetAlbumAsync(OriginalTrack.Album.Id);
-            //GenreString = CreateGenreString(FullAlbum);
         }
 
         public async void LoadFullArtist()

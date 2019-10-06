@@ -53,11 +53,21 @@ else
     /// </summary>
     private bool _isLoading = true;
 
+
+    private enum LoadingStatus
+    {
+        None,
+        LoadingInitialPlaylist,
+        LoadingDepaged,
+        LoadedBasic,
+        LoadingExtended,
+        LoadedExtended
+    }
+
     [Parameter]
     public string id { get; set; }
 
     FullPlaylist loadedPlaylist;
-    PlaylistTrack single;
     List<PlaylistTrack> _depagedResults;
 
     List<TrackWithSelect> _results;
