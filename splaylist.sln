@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "splaylist", "splaylist\spla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpotifyAPI.Web", "SpotifyAPI-NET\SpotifyAPI.Web\SpotifyAPI.Web.csproj", "{00AFA00B-9C0D-4BF4-87F1-DE3D530C6689}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "splaylist.Hosted", "splaylist.Hosted\splaylist.Hosted.csproj", "{1A9F87A4-DF14-4520-AFCD-214510230CC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "splaylist.Hosted", "splaylist.Hosted\splaylist.Hosted.csproj", "{1A9F87A4-DF14-4520-AFCD-214510230CC8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8656BEAD-0E57-417F-8C60-F71A11651B70} = {8656BEAD-0E57-417F-8C60-F71A11651B70}
 	EndProjectSection

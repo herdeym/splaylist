@@ -9,7 +9,9 @@ namespace splaylist
     public class Config
     {
         private static string _clientID = "8061b5bc221041f39b7ef54c58113f09";
-        private static string _callbackURI = "http://localhost:51660/callback";
+        private static string _callbackURI = "https://localhost:44326/callback";
+
+        //         private static string _callbackURI = "http://splaylistdev.azurewebsites.net/callback";
 
         //private IConfiguration _config;
 
@@ -32,7 +34,7 @@ namespace splaylist
 
         public static string ClientID { get { return _clientID; } }
         public static string CallbackURI {  get { return _callbackURI; } }
-        public static string Scopes { get { return _scopes; } }
+        public static string Scopes => _scopes;
 
         public static bool ShowSpotifyPermissions = false;
     }

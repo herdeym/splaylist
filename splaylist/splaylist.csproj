@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.3.0.17-beta" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using SpotifyAPI.Web.Models;
@@ -52,9 +53,11 @@ namespace splaylist.Models
                 // if the fullAlbum has already been set for this track, return it
                 if (_fullAlbum != null) return _fullAlbum;
 
+                // skip if local track (and therefore no album ID)
+                if (OriginalTrack.Album.Id == null) return null;
+
                 // else, see if the full album is in the cache
-                FullAlbum cacheresult;
-                if (Cache.FullAlbums.TryGetValue(OriginalTrack.Album.Id, out cacheresult))
+                if (Cache.FullAlbums.TryGetValue(OriginalTrack.Album.Id, out var cacheresult))
                 {
                     _fullAlbum = cacheresult;
                     return _fullAlbum;
@@ -64,12 +67,37 @@ namespace splaylist.Models
             }
         }
 
-        public List<string> Genres;
+        public List<string> Genres
+        {
+            get
+            {
+                // hack because I haven't removed local tracks from the playlist yet
+                if (OriginalTrack.Artists[0].Id == null) return null;
 
-        public string GenreString { get; protected set; }
+                // TODO - correct for multiple artists
+                if (Cache.FullArtists.TryGetValue(OriginalTrack.Artists[0].Id, out var artist))
+                {
+                    return artist.Genres;
+                }
+
+                return null;
+            }
+        }
+
+        private string _genreString;
+
+        public string GenreString
+        {
+            get
+            {
+                return ConcatenateList(Genres);
+            }
+
+        }
+ 
 
 
-        public static string CreateArtistString(FullTrack ft)
+    public static string CreateArtistString(FullTrack ft)
         {
             string result = ft?.Artists[0]?.Name;
 
@@ -82,7 +110,7 @@ namespace splaylist.Models
             return result;
         }
 
-        public static string CreateGenreString(FullArtist fa)
+        private static string CreateGenreString(FullArtist fa)
         {
             if (fa == null) return "";
             if (fa.Genres.Count == 0) return "";
@@ -96,13 +124,19 @@ namespace splaylist.Models
             return result;
         }
 
-        public async void LoadFullArtist()
+        private static string ConcatenateList(List<string> list)
         {
-            // throw new NotImplementedException();
-            FullArtist = await API.S.GetArtistAsync(OriginalTrack.Artists[0].Id);
-            Genres = FullArtist.Genres;
-            GenreString = CreateGenreString(FullArtist);
+            if (list == null) return "";
+            if (list.Count == 0) return "";
+
+            string result = list[0];
+            for (int i = 1; i < list.Count; i++)
+            {
+                result += "; " + list[i];
+            }
+
+            return result;
         }
-    
-    }
+
+ }
 }

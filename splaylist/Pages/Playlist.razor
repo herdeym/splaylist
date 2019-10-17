@@ -5,6 +5,8 @@
 @using  Blazorise.DataGrid
 @using splaylist.Models
 
+@using Syncfusion.EJ2.Blazor.Grids
+
 @inject API api
 
 <button @onclick="Refresh">Refresh</button>
@@ -31,7 +33,7 @@ else
         {
             /* HACK - PageSize ought to be unlimited, but leaving the parameter out will cap it at 5
             Spotify playlists are capped at 10000 so this shouldn't become an issue */
-
+@*
             
 <DataGrid TItem="TrackWithSelect" Data="@_results" PageSize="10000" class="table table-hover table-dark">
     <DataGridColumn TItem="TrackWithSelect" Field="TrackTitle" Caption="Name" AllowSort="true" />
@@ -40,6 +42,18 @@ else
     <DataGridColumn TItem="TrackWithSelect" Field="AlbumDate" Caption="Release Date" AllowSort="true" />
     <DataGridColumn TItem="TrackWithSelect" Field="GenreString" Caption="Genre" AllowSort="true" />
 </DataGrid>
+*@
+
+<EjsGrid DataSource="@_results" AllowSorting="true" AllowFiltering="true" AllowGrouping="true">
+    <GridFilterSettings Type="FilterType.Excel"></GridFilterSettings>
+    <GridColumns>
+        <GridColumn Field="@nameof(TrackWithSelect.TrackTitle)" HeaderText="Title"></GridColumn>
+        <GridColumn Field="@nameof(TrackWithSelect.Album)" HeaderText="Album"></GridColumn>
+        <GridColumn Field="@nameof(TrackWithSelect.Artists)" HeaderText="Artists"></GridColumn>
+        <GridColumn Field="@nameof(TrackWithSelect.AlbumDate)" HeaderText="Release Date"></GridColumn>
+        <GridColumn Field="@nameof(TrackWithSelect.GenreString)" HeaderText="Genres"></GridColumn>
+    </GridColumns>
+</EjsGrid>
 
         }
     }
@@ -52,6 +66,9 @@ else
     /// Use this while all track info is yet to finish
     /// </summary>
     private bool _isLoading = true;
+
+    private TrackWithSelect _selectedTrack;
+
 
 
     private enum LoadingStatus
@@ -89,10 +106,12 @@ else
         foreach (var track in _depagedResults)
         {
             var tws = new TrackWithSelect(track.Track);
-            tws.LoadFullArtist();
+            // tws.LoadFullArtist();
             _results.Add(tws);
         }
 
+
+        RequestSimpleToFull.UpdateFullArtists();
         _isLoading = false;
 
     }
@@ -100,7 +119,16 @@ else
 
     protected void Refresh()
     {
+
+        // for genre info
+        RequestSimpleToFull.UpdateFullArtists();
         Console.WriteLine(_results);
+    }
+
+    protected string IsChecked(TrackWithSelect tws)
+    {
+        if (tws.Selected) return "checked";
+        return null;
     }
 
 }

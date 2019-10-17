@@ -13,7 +13,7 @@ namespace splaylist.Helpers
         private const int ALBUM_REQUEST_LIMIT = 20;
         private const int ARTIST_REQUEST_LIMIT = 50;
 
-        public async void UpdateFullAlbums()
+        public static async void UpdateFullAlbums()
         {
             List<string> requestIds = new List<string>();
 
@@ -32,7 +32,7 @@ namespace splaylist.Helpers
         }
 
 
-        protected async void SubmitAlbumRequest(List<string> ids)
+        protected static async void SubmitAlbumRequest(List<string> ids)
         {
             if (ids.Count == 0) return;
             var requested = await API.S.GetSeveralAlbumsAsync(ids);
@@ -41,27 +41,32 @@ namespace splaylist.Helpers
                 Cache.Save(album);
                 Cache.PendingAlbums.Remove(album.Id);
             }
+
         }
 
 
-        public async void UpdateFullArtists()
+        public static async void UpdateFullArtists()
         {
+            Console.WriteLine("Loading artists");
                 List<string> requestIds = new List<string>();
 
                 foreach (var artist in Cache.PendingArtists)
                 {
+                    Console.WriteLine(artist.Value.Name);
                     requestIds.Add(artist.Key);
                     if (requestIds.Count == ARTIST_REQUEST_LIMIT)
                     {
                         SubmitArtistRequest(requestIds);
+                        Console.WriteLine(requestIds);
                         requestIds.Clear();
                     }
                 }
                 // request any that didn't full up a request of 50
-                SubmitArtistRequest(requestIds);
+                Console.WriteLine(requestIds);
+                SubmitArtistRequest(requestIds); 
         }
 
-        protected async void SubmitArtistRequest(List<string> ids)
+        protected static async void SubmitArtistRequest(List<string> ids)
         {
             if (ids.Count == 0) return;
             var requested = await API.S.GetSeveralArtistsAsync(ids);
