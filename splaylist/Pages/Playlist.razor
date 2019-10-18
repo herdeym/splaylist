@@ -44,14 +44,26 @@ else
 </DataGrid>
 *@
 
-<EjsGrid DataSource="@_results" AllowSorting="true" AllowFiltering="true" AllowGrouping="true">
+<EjsGrid DataSource="@_results" 
+         AllowSorting="true" 
+         AllowFiltering="true" 
+         AllowGrouping="true" 
+         AllowSelection="true" 
+         ShowColumnChooser="true"
+         Toolbar="@( new List<string>() { "ColumnChooser"})">
+         @*ContextMenuItems="@(new List<object>() { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Delete", "Save", "Cancel"})">*@
+
     <GridFilterSettings Type="FilterType.Excel"></GridFilterSettings>
+    @* Below won't work until a column has been designated the primary key *@
+    <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+
     <GridColumns>
+        <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
         <GridColumn Field="@nameof(TrackWithSelect.TrackTitle)" HeaderText="Title"></GridColumn>
         <GridColumn Field="@nameof(TrackWithSelect.Album)" HeaderText="Album"></GridColumn>
-        <GridColumn Field="@nameof(TrackWithSelect.Artists)" HeaderText="Artists"></GridColumn>
+        <GridColumn Field="@nameof(TrackWithSelect.OriginalTrack.Artists)" HeaderText="Artists"></GridColumn>
         <GridColumn Field="@nameof(TrackWithSelect.AlbumDate)" HeaderText="Release Date"></GridColumn>
-        <GridColumn Field="@nameof(TrackWithSelect.GenreString)" HeaderText="Genres"></GridColumn>
+        <GridColumn Field="@nameof(TrackWithSelect.GenreString)" HeaderText="Genres" Visible="false"></GridColumn>
     </GridColumns>
 </EjsGrid>
 
