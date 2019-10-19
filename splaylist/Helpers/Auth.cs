@@ -10,6 +10,30 @@ namespace splaylist.Helpers
     public class Auth
     {
 
+        // TODO - Utilise state parameter of API to prevent replay attacks
+
+        #region Config Variables
+
+        private const string _scopes = "playlist-read-collaborative" +
+            " playlist-modify-private" +
+            " playlist-modify-public" +
+            " playlist-read-private" +
+            " user-library-modify" +
+            " user-library-read" +
+            // "%20user-follow-read" +
+            " user-read-private";
+
+        private static string _clientID = "8061b5bc221041f39b7ef54c58113f09";
+        private static string _callbackURI = "https://localhost:44326/callback";
+
+        public static string ClientID { get { return _clientID; } }
+        public static string CallbackURI { get { return _callbackURI; } }
+
+        public static bool ShowSpotifyPermissions = false;
+
+        #endregion
+
+
         // Possible parameters after requesting a token
         public string AccessToken { get; private set; }
         public string TokenType { get; private set; }
@@ -18,19 +42,6 @@ namespace splaylist.Helpers
         public string Error { get; private set; }
         public string FullUri { get; private set; }
 
-
-        string GenerateState()
-        {
-            Random r = new Random();
-            return r.Next().ToString();
-        }
-
-
-        public bool SetLinkParams(Uri uri)
-        {
-            string uriString = uri.ToString();
-            return SetLinkParams(uriString);
-        }
 
         public bool SetLinkParams(string uriString) { 
             FullUri = uriString;
@@ -60,10 +71,10 @@ namespace splaylist.Helpers
                 "?response_type=token" +
                 // next line won't do anything until nonce is set in a cookie
                 //"&state=" + nonce +
-                "&client_id=" + Config.ClientID +
-                "&redirect_uri=" + Config.CallbackURI +
-                "&scope=" + Config.Scopes +
-                "&show_dialog=" + Config.ShowSpotifyPermissions.ToString());
+                "&client_id=" + ClientID +
+                "&redirect_uri=" + CallbackURI +
+                "&scope=" + _scopes +
+                "&show_dialog=" + ShowSpotifyPermissions.ToString());
         }
     }
 

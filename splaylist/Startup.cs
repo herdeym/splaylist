@@ -15,7 +15,7 @@ namespace splaylist
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<Config>();
+
 
             // following shouldn't necessarily be a singleton, but useful for testing / makes it easier in client Blazor
             services.AddSingleton<Auth>();

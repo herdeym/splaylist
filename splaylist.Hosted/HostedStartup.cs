@@ -36,7 +36,6 @@ namespace splaylist.Hosted
 
 
 
-            services.AddSingleton<Config>();
             // following shouldn't necessarily be a singleton, but useful for testing / makes it easier in client Blazor
             services.AddSingleton<Auth>();
             services.AddSingleton<API>();
