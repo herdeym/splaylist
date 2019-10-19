@@ -48,11 +48,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // TODO - depaginate
-        var firstPage = await API.S.GetUserPlaylistsAsync(api.UserProfile.Id, limit: 50);
-        //playlistContents = firstPage.Items;
-        var dep = new Depaginator<SimplePlaylist>();
-        Cache.LoadedPlaylists = await dep.Depage(firstPage);
+        await Requester.GetUserPlaylistsAsync(api.UserProfile.Id);
     }
 
 

@@ -18,13 +18,15 @@ namespace splaylist.Models
         public static Dictionary<string, SimpleAlbum> SimpleAlbums;
         public static Dictionary<string, FullAlbum> FullAlbums;
         public static Dictionary<string, FullTrack> FullTracks;
+        public static Dictionary<string, TuneableTrack> TuneableTracks;
 
         // Simple ones which are waiting to be downloaded
         internal static Dictionary<string, SimpleAlbum> PendingAlbums;
-        internal static Dictionary<String, SimpleArtist> PendingArtists;
+        internal static Dictionary<string, SimpleArtist> PendingArtists;
+        internal static Dictionary<string, SimpleTrack> PendingTuning;
 
         // splaylist's custom objects
-        public static Dictionary<string, Track> Tracks;
+        // public static Dictionary<string, Track> Tracks;
         public static Dictionary<string, FullPlaylist> FullPlaylists;
 
         // A user's loaded playlists
@@ -37,11 +39,13 @@ namespace splaylist.Models
             SimpleAlbums = new Dictionary<string, SimpleAlbum>();
             FullAlbums = new Dictionary<string, FullAlbum>();
             FullTracks = new Dictionary<string, FullTrack>();
+            TuneableTracks = new Dictionary<string, TuneableTrack>();
 
             PendingArtists = new Dictionary<string, SimpleArtist>();
             PendingAlbums = new Dictionary<string, SimpleAlbum>();
+            PendingTuning = new Dictionary<string, SimpleTrack>();
 
-            Tracks = new Dictionary<string, Track>();
+            // Tracks = new Dictionary<string, Track>();
             FullPlaylists = new Dictionary<string, FullPlaylist>();
         }
 
@@ -75,6 +79,8 @@ namespace splaylist.Models
         public static void Save(FullTrack fa)
         {
             FullTracks.Add(fa.Id, fa);
+            PendingTuning.Add(fa.Id, fa);
+
             Save(fa.Album);
 
             foreach (var artist in fa.Artists)
