@@ -36,7 +36,8 @@ else
                     <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title" AllowGrouping="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.Album)" HeaderText="Album"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.ArtistString)" HeaderText="Artists"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.AlbumDate)" HeaderText="Release Date"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.AlbumDate)" HeaderText="Release Date" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.PlaylistAddedDate)" HeaderText="Date Added" Format="yMd" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.Id)" HeaderText="Id" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.Index)" HeaderText="Index" Visible="false" IsPrimaryKey="true"></GridColumn>
                 </GridColumns>

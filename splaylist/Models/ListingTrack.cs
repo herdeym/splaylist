@@ -112,6 +112,8 @@ namespace splaylist.Models
         // todo - fix for precision
         public string AlbumDate => FullTrack?.Album?.ReleaseDate;
 
+        public DateTime PlaylistAddedDate => PlaylistTrack.AddedAt;
+
 
 
         public string ArtistString
