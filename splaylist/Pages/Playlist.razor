@@ -54,7 +54,7 @@ else
                     <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
                     <GridColumn Field="@nameof(TrackWithSelect.TrackTitle)" HeaderText="Title"></GridColumn>
                     <GridColumn Field="@nameof(TrackWithSelect.Album)" HeaderText="Album"></GridColumn>
-                    <GridColumn Field="@nameof(TrackWithSelect.OriginalTrack.Artists)" HeaderText="Artists"></GridColumn>
+                    <GridColumn Field="@nameof(TrackWithSelect.Artists)" HeaderText="Artists"></GridColumn>
                     <GridColumn Field="@nameof(TrackWithSelect.AlbumDate)" HeaderText="Release Date"></GridColumn>
                     <GridColumn Field="@nameof(TrackWithSelect.GenreString)" HeaderText="Genres" Visible="false"></GridColumn>
                 </GridColumns>
@@ -143,20 +143,32 @@ else
     EjsGrid<TrackWithSelect> Grid;
     public List<double> SelectedRowIndexes { get; set; }
     public string SelectedValue;
-     
+
 
     public async void GetSelectedRecords(RowSelectEventArgs<TrackWithSelect> args)
     {
+
+                
         double[] TotalValue;
 
+        var row = await this.Grid.GetSelectedRecords();
+
+        // TODO - figure out what's causing the NullReferenceException on select
+        // TODO - handle deselecting values
+        // TODO - select by track IDs
+
         SelectedRowIndexes = await this.Grid.GetSelectedRowIndexes();
+
         TotalValue = SelectedRowIndexes.ToArray();
         SelectedValue = "";
         foreach (var data in TotalValue)
         {
-            // must convert as EjsGrid.GetSelectedRowIndexes returns an array of doubles, but the list only takes strings
+
+            
+            // must convert as EjsGrid.GetSelectedRowIndexes returns an array of doubles, but the list only takes int
             SelectedValue = SelectedValue + " " + _results[Convert.ToInt32(data)].TrackTitle;
         }
+
         StateHasChanged();
     }
 

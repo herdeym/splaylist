@@ -28,14 +28,14 @@ namespace splaylist.Models
         }
 
 
-        public string TrackTitle => OriginalTrack.Name;
-        public string Album => OriginalTrack.Album.Name;
+        public string TrackTitle => OriginalTrack?.Name;
+        public string Album => OriginalTrack?.Album.Name;
 
         public string Artists { get; protected set; }
 
 
         // todo - fix for precision
-        public string AlbumDate => OriginalTrack.Album.ReleaseDate;
+        public string AlbumDate => OriginalTrack?.Album?.ReleaseDate;
 
         
 
@@ -54,7 +54,7 @@ namespace splaylist.Models
                 if (_fullAlbum != null) return _fullAlbum;
 
                 // skip if local track (and therefore no album ID)
-                if (OriginalTrack.Album.Id == null) return null;
+                if (OriginalTrack?.Album?.Id == null) return null;
 
                 // else, see if the full album is in the cache
                 if (Cache.FullAlbums.TryGetValue(OriginalTrack.Album.Id, out var cacheresult))
@@ -72,7 +72,7 @@ namespace splaylist.Models
             get
             {
                 // hack because I haven't removed local tracks from the playlist yet
-                if (OriginalTrack.Artists[0].Id == null) return null;
+                if (OriginalTrack?.Artists[0]?.Id == null) return null;
 
                 // TODO - correct for multiple artists
                 if (Cache.FullArtists.TryGetValue(OriginalTrack.Artists[0].Id, out var artist))
