@@ -1,9 +1,9 @@
 ﻿@page  "/playlists"
 
 @using SpotifyAPI.Web.Models
-@using  Blazorise.DataGrid
 @using splaylist.Helpers
 @using splaylist.Models
+@using Syncfusion.EJ2.Blazor.Grids
 
 @inject API api
 @inject NavigationManager NavigationManager
@@ -15,11 +15,14 @@
 
 @if (Cache.LoadedPlaylists != null)
 {
-    <DataGrid TItem="SimplePlaylist" Data="@Cache.LoadedPlaylists" PageSize="50" class="table table-hover table-dark" @bind-SelectedRow="@SelectedPlaylist">
-        <DataGridColumn TItem="SimplePlaylist" Field="@nameof(SimplePlaylist.Name)" Caption="Name" AllowSort="true" />
-        <DataGridColumn TItem="SimplePlaylist" Field="Owner.DisplayName" Caption="User" AllowSort="true" />
-        <DataGridNumericColumn TItem="SimplePlaylist" Field="Tracks.Total" Caption="Tracks" AllowSort="true" />
-    </DataGrid>
+    <EjsGrid DataSource="@Cache.LoadedPlaylists" >
+        <GridEvents RowSelected="SelectionHandler" TValue="SimplePlaylist"></GridEvents>
+        <GridColumns>
+            <GridColumn Field="@nameof(SimplePlaylist.Id)" HeaderText="ID"></GridColumn>
+            <GridColumn Field="@nameof(SimplePlaylist.Name)" HeaderText="Name"></GridColumn>
+        </GridColumns>
+    </EjsGrid>
+
 }
 else
 {
@@ -30,25 +33,18 @@ else
 
 @code {
 
-    private SimplePlaylist _selectedPlaylist;
-
-    /// <summary>
-    /// Kludge as Blazorise.DataGrid.SelectedRowChanged does not work, navigate on change of databinding
-    /// </summary>
-    SimplePlaylist SelectedPlaylist
-    {
-        get { return _selectedPlaylist; }
-        set
-        {
-            _selectedPlaylist = value;
-            NavigationManager.NavigateTo("playlists/" + _selectedPlaylist?.Id);
-        }
-    }
-
 
     protected override async Task OnInitializedAsync()
     {
         await Requester.GetUserPlaylistsAsync(api.UserProfile.Id);
+    }
+
+    public void SelectionHandler(RowSelectEventArgs<SimplePlaylist> args)
+    {
+        // unsure how this holds up with multiple selection or right clicking
+        var selectedID = args.Data?.Id;
+        if (selectedID != null)
+            NavigationManager.NavigateTo("playlists/" + selectedID);
     }
 
 

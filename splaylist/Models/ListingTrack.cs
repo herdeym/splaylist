@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SpotifyAPI.Web.Models;
 using splaylist.Helpers;
+using Newtonsoft.Json;
 
 namespace splaylist.Models
 {
@@ -15,6 +16,32 @@ namespace splaylist.Models
     /// </summary>
     public class ListingTrack
     {
+
+        // Following is a little hacky, but required when selecting the track in the datagrid
+        [JsonConstructor]
+        public ListingTrack(string id)
+        {
+            _id = id;
+        }
+
+        private string _id;
+
+
+        [JsonProperty]
+        public string Id
+        {
+            get
+            {
+                // if the private ID is set, return that, else try and set it from the FullTrack object.
+                if (_id != null) return _id;
+                _id = FullTrack?.Id;
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
 
         // SimpleTrack encountered when getting tracks off a FullAlbum (simple album doesn't have track info), or recommendations.
         // Commented out as it is not relevant at this point in time (using playlists only)
@@ -54,6 +81,8 @@ namespace splaylist.Models
 
         public PlaylistTrack PlaylistTrack { get; protected set; }
 
+
+        // TODO - get cached FullTrack by id in case this is something constructed just from the ID
         public FullTrack FullTrack { get; protected set; }
 
         /// <summary>
@@ -65,6 +94,9 @@ namespace splaylist.Models
         { get
             {
                 if (_analysed != null) return _analysed;
+
+                // hm, had a null reference exception
+                if (Id == null) return null;
 
                 if (Cache.AnalysedTracks.TryGetValue(Id, out var result))
                 {
@@ -82,7 +114,6 @@ namespace splaylist.Models
         // Not pretty, but the datagrid wasn't handling nested objects 
         public string TrackTitle => FullTrack?.Name;
         public string AlbumName => FullTrack?.Album?.Name;
-        public string Id => FullTrack?.Id;
 
         public int? DurationMs => FullTrack?.DurationMs;
 
@@ -120,7 +151,7 @@ namespace splaylist.Models
         // todo - fix for precision
         public string AlbumDate => FullTrack?.Album?.ReleaseDate;
 
-        public DateTime PlaylistAddedDate => PlaylistTrack.AddedAt;
+        public DateTime? PlaylistAddedDate => PlaylistTrack?.AddedAt;
 
 
 
@@ -132,9 +163,9 @@ namespace splaylist.Models
                     if (FullTrack?.Artists?.Count == 0) return "";
 
                     string result = FullTrack?.Artists[0]?.Name;
-                    for (int i = 1; i < FullTrack.Artists.Count; i++)
+                    for (int i = 1; i < FullTrack?.Artists?.Count; i++)
                     {
-                        result += "; " + FullTrack.Artists[i]?.Name;
+                        result += "; " + FullTrack?.Artists[i]?.Name;
                     }
 
                     return result;
@@ -152,7 +183,12 @@ namespace splaylist.Models
             Major = 1
         }
 
-        public string Mode => ((ModeType)Analysed?.Mode).ToString();
+        public string Mode {  get
+            {
+                if (Analysed == null) return "";
+                if (Analysed.Mode == null) return "";
+                return ((ModeType)Analysed.Mode).ToString();
+            } }
 
 
         private string GetKey(int? k)
