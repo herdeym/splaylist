@@ -8,11 +8,14 @@
 
 @inject API api
 
+<p>Loaded Artists: @CachedArtists.ToString()</p>
+<p>Analysed Tracks: @CachedAnalysis.ToString()</p>
+
 @if (loadedPlaylist == null)
 {
     <p>Loading Playlist...</p>
 }
-else
+else if (CachedAnalysis)
 {
     <h2>@loadedPlaylist.Name</h2>
 
@@ -34,12 +37,13 @@ else
                 <GridColumns>
                     <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title" AllowGrouping="false"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.Album)" HeaderText="Album"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.AlbumName)" HeaderText="Album"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.ArtistString)" HeaderText="Artists"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.AlbumDate)" HeaderText="Release Date" Visible="false"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.PlaylistAddedDate)" HeaderText="Date Added" Format="yMd" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.PlaylistAddedDate)" HeaderText="Date Added to Playlist" Format="yMd" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.Id)" HeaderText="Id" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.Index)" HeaderText="Index" Visible="false" IsPrimaryKey="true"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Tempo)" HeaderText="Tempo"></GridColumn>
                 </GridColumns>
             </EjsGrid>
 
@@ -56,6 +60,9 @@ else
 
     List<ListingTrack> playlistContents;
 
+    bool CachedArtists;
+    bool CachedAnalysis;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,6 +70,10 @@ else
         // todo - loading status
         loadedPlaylist = await API.S.GetPlaylistAsync(id);
         playlistContents = await Requester.GetPlaylistTracks(loadedPlaylist);
+
+
+        CachedAnalysis = await Requester.CacheAnalysedTracks(playlistContents);
+        CachedArtists = await Requester.CacheFullArtists(playlistContents);
     }
 
 

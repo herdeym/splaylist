@@ -60,19 +60,20 @@ namespace splaylist.Models
         /// TunableTrack, with properties for tempo, valence, etc
         /// Does not contain ID so can't be used as constructor
         /// </summary>
-        private TuneableTrack _tuneableTrack;
-        public TuneableTrack TuneableTrack { get
+        private AudioFeatures _analysed;
+        public AudioFeatures Analysed
+        { get
             {
-                if (_tuneableTrack != null) return _tuneableTrack;
+                if (_analysed != null) return _analysed;
 
-                if (Cache.TuneableTracks.TryGetValue(FullTrack.Id, out var result))
+                if (Cache.AnalysedTracks.TryGetValue(Id, out var result))
                 {
-                    _tuneableTrack = result;
+                    _analysed = result;
                     return result;
                 }
 
                 // If we're waiting on the tunable track, add it to the cache's pending list
-                Cache.PendingTuning.Add(FullTrack.Id, FullTrack);
+                Cache.PendingTuning[FullTrack.Id] = FullTrack;
                 return null;
             }
         }
@@ -80,8 +81,12 @@ namespace splaylist.Models
 
         // Not pretty, but the datagrid wasn't handling nested objects 
         public string TrackTitle => FullTrack?.Name;
-        public string Album => FullTrack?.Album?.Name;
+        public string AlbumName => FullTrack?.Album?.Name;
         public string Id => FullTrack?.Id;
+
+        public string AlbumId => FullTrack?.Album?.Id;
+
+        public List<SimpleArtist> ArtistObjects => FullTrack?.Artists;
 
         // below contains genre (but not as useful as artist), tracks, and popularity
         // public FullAlbum FullAlbum;
@@ -135,6 +140,6 @@ namespace splaylist.Models
         }
 
 
-
+        public float? Tempo => Analysed?.Tempo;
     }
 }

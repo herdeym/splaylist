@@ -14,89 +14,7 @@ namespace splaylist.Helpers
         private const int ALBUM_REQUEST_LIMIT = 20;
         private const int ARTIST_REQUEST_LIMIT = 50;
         private const int PLAYLIST_REQUEST_LIMIT = 50;
-        private const int TUNABLE_REQUEST_LIMIT = 100;
-
-
-        #region Deprecated Helpers
-        public static async void UpdateFullAlbums()
-        {
-            List<string> requestIds = new List<string>();
-
-            foreach (var album in Cache.PendingAlbums)
-            {
-                requestIds.Add(album.Key);
-
-                // An API request for albums can only request 20 albums at a time
-                if (requestIds.Count == ALBUM_REQUEST_LIMIT)
-                {
-                    SubmitAlbumRequest(requestIds);
-                    requestIds.Clear();
-                }
-            }
-            SubmitAlbumRequest(requestIds);
-        }
-
-
-        protected static async void SubmitAlbumRequest(List<string> ids)
-        {
-            if (ids.Count == 0) return;
-            var requested = await API.S.GetSeveralAlbumsAsync(ids);
-            foreach (var album in requested.Albums)
-            {
-                Cache.Save(album);
-                Cache.PendingAlbums.Remove(album.Id);
-            }
-
-        }
-
-
-        public static async void UpdateFullArtists()
-        {
-            Console.WriteLine("Loading artists");
-                List<string> requestIds = new List<string>();
-
-                foreach (var artist in Cache.PendingArtists)
-                {
-                    Console.WriteLine(artist.Value.Name);
-                    requestIds.Add(artist.Key);
-                    if (requestIds.Count == ARTIST_REQUEST_LIMIT)
-                    {
-                        SubmitArtistRequest(requestIds);
-                        Console.WriteLine(requestIds);
-                        requestIds.Clear();
-                    }
-                }
-                // request any that didn't full up a request of 50
-                Console.WriteLine(requestIds);
-                SubmitArtistRequest(requestIds); 
-        }
-
-        protected static async void SubmitArtistRequest(List<string> ids)
-        {
-            if (ids.Count == 0) return;
-            var requested = await API.S.GetSeveralArtistsAsync(ids);
-            foreach (var artist in requested.Artists)
-            {
-                Cache.Save(artist);
-                Cache.PendingArtists.Remove(artist.Id);
-            }
-        }
-
-        private static string ConcatenateList(List<string> list)
-        {
-            if (list == null) return "";
-            if (list.Count == 0) return "";
-
-            string result = list[0];
-            for (int i = 1; i < list.Count; i++)
-            {
-                result += "; " + list[i];
-            }
-
-            return result;
-        }
-
-        #endregion
+        private const int FEATURE_REQUEST_LIMIT = 100;
 
 
         public static async Task<List<SimplePlaylist>> GetUserPlaylistsAsync(string UserID)
@@ -121,11 +39,144 @@ namespace splaylist.Helpers
             {
                 PlaylistTrack playlistTrack = depagedPlaylist[i];
                 results.Add(new ListingTrack(playlistTrack, i));
+
+                // Cache just the FullTrack
+                Cache.Save(playlistTrack.Track);
             }
 
             return results;
 
             // TODO - Extract loading status
+        }
+
+
+        /// <summary>
+        /// Downloads full albums for a playlist
+        /// </summary>
+        /// <param name="playlist"></param>
+        /// <returns></returns>
+        public static async Task<bool> CacheFullAlbums(List<ListingTrack> playlist)
+        {
+            var ids = new List<string>();
+            foreach (var track in playlist)
+            {
+                ids.Add(track.AlbumId);
+            }
+            return await CacheFullAlbums(ids);
+        }
+
+
+        public static async Task<bool> CacheFullAlbums(List<string> ids)
+        {
+            // Split the list so that it doesn't exceed 20 albums at one time
+            if (ids.Count > ALBUM_REQUEST_LIMIT)
+            {
+                for (int i = 0; i <= ids.Count; i += ALBUM_REQUEST_LIMIT)
+                {
+                    // if we're at the end of the list, only request up to count, as otherwise we hit an OutOfBounds exception
+                    if (i + ALBUM_REQUEST_LIMIT > ids.Count)
+                    {
+                        await CacheFullAlbums(ids.GetRange(i, ids.Count - i));
+                    }
+                    else
+                    {
+                        await CacheFullAlbums(ids.GetRange(i, ALBUM_REQUEST_LIMIT));
+                    }
+                }
+            }
+
+            var request = await API.S.GetSeveralAlbumsAsync(ids);
+            if (request.HasError()) return false;
+            foreach (var album in request.Albums)
+            {
+                Cache.Save(album);
+            }
+            return true;
+        }
+
+
+
+        public static async Task<bool> CacheFullArtists(List<ListingTrack> playlist)
+        {
+            var ids = new List<string>();
+            foreach (var track in playlist)
+            {
+                foreach (var artist in track.ArtistObjects)
+                {
+                    ids.Add(artist.Id);
+                }
+            }
+            return await CacheFullArtists(ids);
+        }
+
+
+        public static async Task<bool> CacheFullArtists(List<string> ids)
+        {
+            // Split the list so that it doesn't exceed 20 albums at one time
+            if (ids.Count > ARTIST_REQUEST_LIMIT)
+            {
+                for (int i = 0; i <= ids.Count; i += ARTIST_REQUEST_LIMIT)
+                {
+                    // if we're at the end of the list, only request up to count, as otherwise we hit an OutOfBounds exception
+                    if (i + ARTIST_REQUEST_LIMIT > ids.Count)
+                    {
+                        await CacheFullArtists(ids.GetRange(i, ids.Count - i));
+                    }
+                    else
+                    {
+                        await CacheFullArtists(ids.GetRange(i, ARTIST_REQUEST_LIMIT));
+                    }
+                }
+            }
+
+
+            var request = await API.S.GetSeveralArtistsAsync(ids);
+            if (request.HasError()) return false;
+            foreach (var artist in request.Artists)
+            {
+                Cache.Save(artist);
+            }
+            return true;
+        }
+
+        public static async Task<bool> CacheAnalysedTracks(List<ListingTrack> playlist)
+        {
+            var ids = new List<string>();
+            foreach (var track in playlist)
+            {
+                    ids.Add(track.Id);
+            }
+            return await CacheAnalysedTracks(ids);
+        }
+
+
+        public static async Task<bool> CacheAnalysedTracks(List<string> ids)
+        {
+            // Split the list so that it doesn't exceed 20 albums at one time
+            if (ids.Count > FEATURE_REQUEST_LIMIT)
+            {
+                for (int i = 0; i <= ids.Count; i += FEATURE_REQUEST_LIMIT)
+                {
+                    // if we're at the end of the list, only request up to count, as otherwise we hit an OutOfBounds exception
+                    if (i + FEATURE_REQUEST_LIMIT > ids.Count)
+                    {
+                        await CacheAnalysedTracks(ids.GetRange(i, ids.Count - i));
+                    }
+                    else
+                    {
+                        await CacheAnalysedTracks(ids.GetRange(i, FEATURE_REQUEST_LIMIT));
+                    }
+                }
+            }
+
+
+            var request = await API.S.GetSeveralAudioFeaturesAsync(ids);
+            if (request.HasError()) return false;
+            foreach (var af in request.AudioFeatures)
+            {
+                Cache.Save(af);
+            }
+            return true;
         }
 
 
