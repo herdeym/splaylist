@@ -71,18 +71,7 @@ namespace splaylist.Helpers
             // Split the list so that it doesn't exceed 20 albums at one time
             if (ids.Count > ALBUM_REQUEST_LIMIT)
             {
-                for (int i = 0; i <= ids.Count; i += ALBUM_REQUEST_LIMIT)
-                {
-                    // if we're at the end of the list, only request up to count, as otherwise we hit an OutOfBounds exception
-                    if (i + ALBUM_REQUEST_LIMIT > ids.Count)
-                    {
-                        await CacheFullAlbums(ids.GetRange(i, ids.Count - i));
-                    }
-                    else
-                    {
-                        await CacheFullAlbums(ids.GetRange(i, ALBUM_REQUEST_LIMIT));
-                    }
-                }
+                SplitList(CacheFullAlbums, ids, ALBUM_REQUEST_LIMIT);
             }
 
             var request = await API.S.GetSeveralAlbumsAsync(ids);
@@ -112,21 +101,9 @@ namespace splaylist.Helpers
 
         public static async Task<bool> CacheFullArtists(List<string> ids)
         {
-            // Split the list so that it doesn't exceed 20 albums at one time
             if (ids.Count > ARTIST_REQUEST_LIMIT)
             {
-                for (int i = 0; i <= ids.Count; i += ARTIST_REQUEST_LIMIT)
-                {
-                    // if we're at the end of the list, only request up to count, as otherwise we hit an OutOfBounds exception
-                    if (i + ARTIST_REQUEST_LIMIT > ids.Count)
-                    {
-                        await CacheFullArtists(ids.GetRange(i, ids.Count - i));
-                    }
-                    else
-                    {
-                        await CacheFullArtists(ids.GetRange(i, ARTIST_REQUEST_LIMIT));
-                    }
-                }
+                SplitList(CacheFullArtists, ids, ARTIST_REQUEST_LIMIT);
             }
 
 
@@ -155,18 +132,7 @@ namespace splaylist.Helpers
             // Split the list so that it doesn't exceed 20 albums at one time
             if (ids.Count > FEATURE_REQUEST_LIMIT)
             {
-                for (int i = 0; i <= ids.Count; i += FEATURE_REQUEST_LIMIT)
-                {
-                    // if we're at the end of the list, only request up to count, as otherwise we hit an OutOfBounds exception
-                    if (i + FEATURE_REQUEST_LIMIT > ids.Count)
-                    {
-                        await CacheAnalysedTracks(ids.GetRange(i, ids.Count - i));
-                    }
-                    else
-                    {
-                        await CacheAnalysedTracks(ids.GetRange(i, FEATURE_REQUEST_LIMIT));
-                    }
-                }
+                SplitList(CacheAnalysedTracks, ids, FEATURE_REQUEST_LIMIT);
             }
 
 
@@ -180,5 +146,24 @@ namespace splaylist.Helpers
         }
 
 
+        // Was repeating this a bit
+        // todo - propogate errors if they come up
+        private static async void SplitList(Func<List<string>, Task> cacher, List<string> ids, int limit)
+        {
+
+            for (int i = 0; i <= ids.Count; i += limit)
+            {
+                // if we're at the end of the list, only request up to count, as otherwise we hit an OutOfBounds exception
+                if (i + limit > ids.Count)
+                {
+                    await cacher(ids.GetRange(i, ids.Count - i));
+                }
+                else
+                {
+                    await cacher(ids.GetRange(i, limit));
+                }
+            }
+
+        }
     }
 }
