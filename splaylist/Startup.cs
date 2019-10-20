@@ -1,6 +1,3 @@
-using Blazorise;
-using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,13 +20,7 @@ namespace splaylist
             services.AddSingleton<Cache>();
 
 
-            // Blazorise - used for DataGrid
-            services.AddBlazorise(options =>
-                {
-                    options.ChangeTextOnKeyPress = true; // optional
-                })
-                .AddBootstrapProviders()
-                .AddFontAwesomeIcons();
+
         }
 
         public void Configure(IComponentsApplicationBuilder app)
