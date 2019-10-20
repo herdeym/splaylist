@@ -36,14 +36,31 @@ else if (CachedAnalysis)
 
                 <GridColumns>
                     <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title" AllowGrouping="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Index)" HeaderText="#" Visible="false" IsPrimaryKey="true"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title" ></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.AlbumName)" HeaderText="Album"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.ArtistString)" HeaderText="Artists"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.AlbumDate)" HeaderText="Release Date" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.PlaylistAddedDate)" HeaderText="Date Added to Playlist" Format="yMd" Visible="false"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.Id)" HeaderText="Id" Visible="false"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.Index)" HeaderText="Index" Visible="false" IsPrimaryKey="true"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.Tempo)" HeaderText="Tempo"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Id)" HeaderText="Track ID" Visible="false"></GridColumn>
+
+                    <!-- Analysed Values -->
+                    <GridColumn Field="@nameof(ListingTrack.Key)" HeaderText="Key"  Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Mode)" HeaderText="Major/Minor" Visible="false"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.Tempo)" HeaderText="Tempo" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.TimeSignatureString)" HeaderText="Time Signature" Visible="false"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.Acousticness)" HeaderText="Acousticness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Danceability)" HeaderText="Danceability" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Energy)" HeaderText="Energy" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Instrumentalness)" HeaderText="Instrumentalness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Liveness)" HeaderText="Liveness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Loudness)" HeaderText="Loudness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Speechiness)" HeaderText="Speechiness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Valence)" HeaderText="Valence" Visible="false"></GridColumn>
+
                 </GridColumns>
             </EjsGrid>
 

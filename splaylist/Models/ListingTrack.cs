@@ -8,33 +8,33 @@ using splaylist.Helpers;
 
 namespace splaylist.Models
 {
- /// <summary>
- ///  Track used in listings of tracks.
- ///
- /// While ideally this would inherit from FullTrack and just add extra methods, downcasting proved too cumbersome.
- /// </summary>
+    /// <summary>
+    ///  Track used in listings of tracks.
+    ///
+    /// While ideally this would inherit from FullTrack and just add extra methods, downcasting proved too cumbersome.
+    /// </summary>
     public class ListingTrack
- {
+    {
 
         // SimpleTrack encountered when getting tracks off a FullAlbum (simple album doesn't have track info), or recommendations.
         // Commented out as it is not relevant at this point in time (using playlists only)
         // Relevant fields - SimpleArtist, Id, Name, DurationMs
         // Since FullTrack has been modified to extend SimpleTrack, we can actually cast FullTrack for it
         // private SimpleTrack _simpleTrack;
-       
 
-            /// <summary>
-            /// Index so that the DataGrid has a primary key when rearranging the display of the playlist
-            /// </summary>
+
+        /// <summary>
+        /// Index so that the DataGrid has a primary key when rearranging the display of the playlist
+        /// </summary>
         public int Index { get; protected set; }
 
-        public ListingTrack(FullTrack ft, int index=-1)
+        public ListingTrack(FullTrack ft, int index = -1)
         {
             FullTrack = ft;
             Index = index;
         }
 
-        public ListingTrack(PlaylistTrack pt, int index=-1)
+        public ListingTrack(PlaylistTrack pt, int index = -1)
         {
             PlaylistTrack = pt;
             FullTrack = pt.Track;
@@ -83,6 +83,9 @@ namespace splaylist.Models
         public string TrackTitle => FullTrack?.Name;
         public string AlbumName => FullTrack?.Album?.Name;
         public string Id => FullTrack?.Id;
+
+        public int? DurationMs => FullTrack?.DurationMs;
+
 
         public string AlbumId => FullTrack?.Album?.Id;
 
@@ -139,7 +142,62 @@ namespace splaylist.Models
             }
         }
 
+        #region AudioFeatures
+        // mode - major / minor
+        // key - pitch class notation
 
+        private enum ModeType
+        {
+            Minor = 0,
+            Major = 1
+        }
+
+        public string Mode => ((ModeType)Analysed?.Mode).ToString();
+
+
+        private string GetKey(int? k)
+        {
+            // can't do enum kludge because of # symbol
+            switch (k)
+            {
+                case 0: return "C";
+                case 1: return "C#";
+                case 2: return "D";
+                case 3: return "D#";
+                case 4: return "E";
+                case 5: return "F";
+                case 6: return "F#";
+                case 7: return "G";
+                case 8: return "G#";
+                case 9: return "A";
+                case 10: return "A#";
+                case 11: return "B";
+                case null:
+                default: return "";
+            }
+        }
+
+        public string Key => GetKey(Analysed?.Key);
+        public float? Acousticness => Analysed?.Acousticness;
+        public float? Danceability => Analysed?.Danceability;
+        public float? Instrumentalness => Analysed?.Instrumentalness;
+        public float? Energy => Analysed?.Energy;
+        public float? Liveness => Analysed?.Liveness;
+        public float? Loudness => Analysed?.Loudness;
+        public float? Speechiness => Analysed?.Speechiness;
         public float? Tempo => Analysed?.Tempo;
+        public int? TimeSignature => Analysed?.TimeSignature;
+
+        public string TimeSignatureString { get { 
+                // Assumes all measures are over 4
+                if (TimeSignature == null) return "";
+                return $"{TimeSignature}/4";
+            } }
+
+        public float? Valence => Analysed?.Valence;
+
+        
+
+        #endregion
     }
 }
