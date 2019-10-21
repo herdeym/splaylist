@@ -13,13 +13,17 @@
 <p>User: @api.UserProfile.DisplayName</p>
 <p>User ID: @api.UserProfile.Id</p>
 
-@if (Cache.LoadedPlaylists != null)
+@if (LoadedListingPlaylists != null)
 {
-    <EjsGrid DataSource="@Cache.LoadedPlaylists" >
-        <GridEvents RowSelected="SelectionHandler" TValue="SimplePlaylist"></GridEvents>
+    <EjsGrid DataSource="@LoadedListingPlaylists" >
+        <GridEvents RowSelected="SelectionHandler" TValue="ListingPlaylist"></GridEvents>
         <GridColumns>
-            <GridColumn Field="@nameof(SimplePlaylist.Id)" HeaderText="ID"></GridColumn>
-            <GridColumn Field="@nameof(SimplePlaylist.Name)" HeaderText="Name"></GridColumn>
+            <GridColumn Field="@nameof(ListingPlaylist.Name)" HeaderText="Name"></GridColumn>
+            <GridColumn Field="@nameof(ListingPlaylist.Owner)" HeaderText="Owner"></GridColumn>
+            <GridColumn Field="@nameof(ListingPlaylist.Public)" HeaderText="Public" Visible="false"></GridColumn>
+            <GridColumn Field="@nameof(ListingPlaylist.TrackCount)" HeaderText="Track Count"></GridColumn>
+            <GridColumn Field="@nameof(ListingPlaylist.Id)" HeaderText="ID" Visible="false"></GridColumn>
+
         </GridColumns>
     </EjsGrid>
 
@@ -33,13 +37,21 @@ else
 
 @code {
 
+    List<ListingPlaylist> LoadedListingPlaylists;
 
     protected override async Task OnInitializedAsync()
     {
-        await Requester.GetUserPlaylistsAsync(api.UserProfile.Id);
+        var simpleplaylists = await Requester.GetUserPlaylistsAsync(api.UserProfile.Id);
+        var lp = new List<ListingPlaylist>();
+        foreach (var playlist in simpleplaylists)
+        {
+            lp.Add(new ListingPlaylist(playlist));
+        }
+        LoadedListingPlaylists = lp;
+
     }
 
-    public void SelectionHandler(RowSelectEventArgs<SimplePlaylist> args)
+    public void SelectionHandler(RowSelectEventArgs<ListingPlaylist> args)
     {
         // unsure how this holds up with multiple selection or right clicking
         var selectedID = args.Data?.Id;
