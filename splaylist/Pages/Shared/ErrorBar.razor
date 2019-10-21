@@ -1,0 +1,23 @@
+﻿@if (!string.IsNullOrEmpty(_errorText))
+{
+    <div class="alert alert-danger alert-dismissible" style="position: fixed; bottom: 1em; width: auto; right: 2em;">
+        <button type="button" class="close" data-dismiss="alert" @onclick="ClearError">&times;</button>
+         @*<h4 class="alert-heading">Warning!</h4>*@
+         <p class="mb-0">@_errorText</p>
+     </div>
+}
+
+@code {
+    static string _errorText = "";
+
+    public static string AddError(string text)
+    {
+        _errorText += text;
+        return _errorText;
+    }
+
+    public static void ClearError()
+    {
+        _errorText = "";
+    }
+}

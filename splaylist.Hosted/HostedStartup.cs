@@ -1,12 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Blazorise;
-using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
@@ -36,19 +28,11 @@ namespace splaylist.Hosted
 
 
 
-            services.AddSingleton<Config>();
             // following shouldn't necessarily be a singleton, but useful for testing / makes it easier in client Blazor
             services.AddSingleton<Auth>();
             services.AddSingleton<API>();
             services.AddSingleton<Cache>();
 
-            services
-                .AddBlazorise(options =>
-                {
-                    options.ChangeTextOnKeyPress = true; // optional
-                })
-                .AddBootstrapProviders()
-                .AddFontAwesomeIcons();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,12 +51,6 @@ namespace splaylist.Hosted
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-
-            // Added for Blazorise
-            app.ApplicationServices
-                .UseBootstrapProviders()
-                .UseFontAwesomeIcons();
 
             app.UseRouting();
 
