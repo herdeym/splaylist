@@ -1,10 +1,5 @@
-﻿using System;
+﻿using SpotifyAPI.Web.Models;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
-using splaylist.Helpers;
-using SpotifyAPI.Web.Models;
 
 namespace splaylist.Models
 {
@@ -49,10 +44,10 @@ namespace splaylist.Models
             FullPlaylists = new Dictionary<string, FullPlaylist>();
         }
 
-// Simple / full artists / albums
-// Simple ones can be replaced with full after an API request
+        // Simple / full artists / albums
+        // Simple ones can be replaced with full after an API request
 
-            // NOTE - Dictionary syntax is dict[key] = value; not dict.Add(key, value); due to exceptions occuring when a key already exists
+        // NOTE - Dictionary syntax is dict[key] = value; not dict.Add(key, value); due to exceptions occuring when a key already exists
         public static void Save(SimpleArtist sa)
         {
             SimpleArtists[sa.Id] = sa;
@@ -89,7 +84,7 @@ namespace splaylist.Models
             {
                 Save(artist);
             }
-            
+
         }
 
 
@@ -105,5 +100,5 @@ namespace splaylist.Models
         }
 
 
-     }
+    }
 }

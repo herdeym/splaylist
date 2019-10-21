@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 using SpotifyAPI.Web.Models;
-using splaylist.Helpers;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace splaylist.Models
 {
@@ -91,7 +87,8 @@ namespace splaylist.Models
         /// </summary>
         private AudioFeatures _analysed;
         public AudioFeatures Analysed
-        { get
+        {
+            get
             {
                 if (_analysed != null) return _analysed;
 
@@ -183,12 +180,14 @@ namespace splaylist.Models
             Major = 1
         }
 
-        public string Mode {  get
+        public string Mode
+        {
+            get
             {
                 if (Analysed == null) return "";
-                if (Analysed.Mode == null) return "";
                 return ((ModeType)Analysed.Mode).ToString();
-            } }
+            }
+        }
 
 
         private string GetKey(int? k)
@@ -224,15 +223,19 @@ namespace splaylist.Models
         public float? Tempo => Analysed?.Tempo;
         public int? TimeSignature => Analysed?.TimeSignature;
 
-        public string TimeSignatureString { get { 
+        public string TimeSignatureString
+        {
+            get
+            {
                 // Assumes all measures are over 4
                 if (TimeSignature == null) return "";
                 return $"{TimeSignature}/4";
-            } }
+            }
+        }
 
         public float? Valence => Analysed?.Valence;
 
-        
+
 
         #endregion
     }

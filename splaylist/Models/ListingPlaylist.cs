@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using SpotifyAPI.Web.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace splaylist.Models
 {
@@ -36,7 +32,8 @@ namespace splaylist.Models
         private string _id;
 
         [JsonProperty]
-        public string Id {
+        public string Id
+        {
             get
             {
                 if (_id != null) return _id;

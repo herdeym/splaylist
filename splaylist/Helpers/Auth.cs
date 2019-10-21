@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.WebUtilities;
+﻿using Microsoft.AspNetCore.WebUtilities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace splaylist.Helpers
 {
@@ -43,7 +40,8 @@ namespace splaylist.Helpers
         public string FullUri { get; private set; }
 
 
-        public bool SetLinkParams(string uriString) { 
+        public bool SetLinkParams(string uriString)
+        {
             FullUri = uriString;
 
             // if successful callback, the link contains a "hash fragment" rather than a query string

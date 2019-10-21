@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using splaylist.Models;
+﻿using splaylist.Models;
 using SpotifyAPI.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace splaylist.Helpers
 {
@@ -22,7 +21,7 @@ namespace splaylist.Helpers
             var firstPage = await API.S.GetUserPlaylistsAsync(UserID, PLAYLIST_REQUEST_LIMIT);
             var depaginate = new Depaginator<SimplePlaylist>();
             var results = await depaginate.Depage(firstPage);
-            Cache.LoadedPlaylists = results; 
+            Cache.LoadedPlaylists = results;
             return results;
         }
 
@@ -121,7 +120,7 @@ namespace splaylist.Helpers
             var ids = new List<string>();
             foreach (var track in playlist)
             {
-                    ids.Add(track.Id);
+                ids.Add(track.Id);
             }
             return await CacheAnalysedTracks(ids);
         }
