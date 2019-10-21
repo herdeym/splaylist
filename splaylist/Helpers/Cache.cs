@@ -24,8 +24,10 @@ namespace splaylist.Models
         // public static Dictionary<string, Track> Tracks;
         public static Dictionary<string, FullPlaylist> FullPlaylists;
 
+        public static Dictionary<string, ListingPlaylist> Playlists;
+
         // A user's loaded playlists
-        public static List<SimplePlaylist> LoadedPlaylists;
+        public static List<ListingPlaylist> UsersPlaylists;
 
         public Cache()
         {
@@ -42,6 +44,8 @@ namespace splaylist.Models
 
             // Tracks = new Dictionary<string, Track>();
             FullPlaylists = new Dictionary<string, FullPlaylist>();
+
+            Playlists = new Dictionary<string, ListingPlaylist>();
         }
 
         // Simple / full artists / albums
@@ -50,6 +54,7 @@ namespace splaylist.Models
         // NOTE - Dictionary syntax is dict[key] = value; not dict.Add(key, value); due to exceptions occuring when a key already exists
         public static void Save(SimpleArtist sa)
         {
+            if (sa?.Id == null) return;
             SimpleArtists[sa.Id] = sa;
             PendingArtists[sa.Id] = sa;
         }
@@ -57,24 +62,28 @@ namespace splaylist.Models
 
         public static void Save(FullArtist fa)
         {
+            if (fa?.Id == null) return;
             FullArtists[fa.Id] = fa;
         }
 
 
         public static void Save(SimpleAlbum sa)
         {
+            if (sa?.Id == null) return;
             SimpleAlbums[sa.Id] = sa;
             PendingAlbums[sa.Id] = sa;
         }
 
         public static void Save(FullAlbum fa)
         {
+            if (fa?.Id == null) return;
             FullAlbums[fa.Id] = fa;
         }
 
         // Tracks - come with simple information which must be added
         public static void Save(FullTrack fa)
         {
+            if (fa?.Id == null) return;
             FullTracks[fa.Id] = fa;
             PendingTuning[fa.Id] = fa;
 
@@ -99,6 +108,11 @@ namespace splaylist.Models
             AnalysedTracks[af.Id] = af;
         }
 
+
+        public static void Save(ListingPlaylist lp)
+        {
+            Playlists[lp.Id] = lp;
+        }
 
     }
 }

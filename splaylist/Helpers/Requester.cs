@@ -21,7 +21,7 @@ namespace splaylist.Helpers
             var firstPage = await API.S.GetUserPlaylistsAsync(UserID, PLAYLIST_REQUEST_LIMIT);
             var depaginate = new Depaginator<SimplePlaylist>();
             var results = await depaginate.Depage(firstPage);
-            Cache.LoadedPlaylists = results;
+            // Cache.LoadedPlaylists = results;
             return results;
         }
 

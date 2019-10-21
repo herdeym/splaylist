@@ -8,27 +8,35 @@
 
 @inject API api
 
-<p>Loaded Artists: @CachedArtists.ToString()</p>
-<p>Analysed Tracks: @CachedAnalysis.ToString()</p>
-
-@if (loadedPlaylist == null)
+@if (playlist == null)
 {
     <p>Loading Playlist...</p>
 }
-else if (CachedAnalysis)
+else 
 {
 
-    <h2>@loadedPlaylist.Name</h2>
+    <h2>@playlist.Name</h2>
+    <p>Created by @playlist.Owner, @playlist.TrackCount tracks.</p>
 
+    if (!BasicLoaded)
+    {
+        <p>Loading tracks...</p>
+    }
+    else if (!ExtendedLoaded)
+    {
+        <p>Loading detailed track data...</p>
+    }
+    else
+    {
 
-    <EjsGrid DataSource="@playlistContents"
+    <EjsGrid DataSource="@playlist.ListingTracks"
              @ref="@Grid"
              AllowSorting="true"
              AllowFiltering="true"
              AllowGrouping="true"
              AllowSelection="true"
              ShowColumnChooser="true"
-             Toolbar="@( new List<string>() { "ColumnChooser"})">
+             Toolbar="@( new List<string>() { "ColumnChooser" })">
         @*ContextMenuItems="@(new List<object>() { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Delete", "Save", "Cancel"})">*@
 
         <GridFilterSettings Type="FilterType.Excel"></GridFilterSettings>
@@ -66,7 +74,7 @@ else if (CachedAnalysis)
         </GridColumns>
     </EjsGrid>
 
-
+    }
 }
 
 @code
@@ -75,24 +83,26 @@ else if (CachedAnalysis)
     [Parameter]
     public string id { get; set; }
 
-    FullPlaylist loadedPlaylist;
 
-    List<ListingTrack> playlistContents;
+    bool BasicLoaded;
+    bool ExtendedLoaded;
 
-    bool CachedArtists;
-    bool CachedAnalysis;
+    ListingPlaylist playlist;
 
 
     protected override async Task OnInitializedAsync()
     {
-        // todo - merge FullPlaylist with List<ListingTrack> under it
         // todo - loading status
-        loadedPlaylist = await API.S.GetPlaylistAsync(id);
-        playlistContents = await Requester.GetPlaylistTracks(loadedPlaylist);
+        // todo - propagate error
+        if (!Cache.Playlists.TryGetValue(id, out playlist))
+        {
+            // if the playlist isn't in the cache, download it
+            throw new NotImplementedException("need to cache playlist here");
+        }
+        BasicLoaded = await playlist.GetFullPlaylist();
+        ExtendedLoaded = await playlist.ExtendTracks();
 
 
-        CachedAnalysis = await Requester.CacheAnalysedTracks(playlistContents);
-        CachedArtists = await Requester.CacheFullArtists(playlistContents);
     }
 
 

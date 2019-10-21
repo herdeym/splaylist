@@ -13,9 +13,9 @@
 <p>User: @api.UserProfile.DisplayName</p>
 <p>User ID: @api.UserProfile.Id</p>
 
-@if (LoadedListingPlaylists != null)
+@if (Cache.UsersPlaylists != null)
 {
-    <EjsGrid DataSource="@LoadedListingPlaylists" >
+    <EjsGrid DataSource="@Cache.UsersPlaylists" >
         <GridEvents RowSelected="SelectionHandler" TValue="ListingPlaylist"></GridEvents>
         <GridColumns>
             <GridColumn Field="@nameof(ListingPlaylist.Name)" HeaderText="Name"></GridColumn>
@@ -37,17 +37,23 @@ else
 
 @code {
 
-    List<ListingPlaylist> LoadedListingPlaylists;
 
     protected override async Task OnInitializedAsync()
     {
-        var simpleplaylists = await Requester.GetUserPlaylistsAsync(api.UserProfile.Id);
-        var lp = new List<ListingPlaylist>();
-        foreach (var playlist in simpleplaylists)
+        if (Cache.UsersPlaylists == null)
         {
-            lp.Add(new ListingPlaylist(playlist));
+            var lp = new List<ListingPlaylist>();
+
+            var simpleplaylists = await Requester.GetUserPlaylistsAsync(api.UserProfile.Id);
+
+            foreach (var playlist in simpleplaylists)
+            {
+                lp.Add(new ListingPlaylist(playlist));
+            }
+            Cache.UsersPlaylists = lp;
+
         }
-        LoadedListingPlaylists = lp;
+
 
     }
 
