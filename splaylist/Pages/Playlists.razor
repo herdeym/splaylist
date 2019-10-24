@@ -4,6 +4,7 @@
 @using splaylist.Helpers
 @using splaylist.Models
 @using Syncfusion.EJ2.Blazor.Grids
+@using Syncfusion.EJ2.Blazor.Navigations
 
 @inject API api
 @inject NavigationManager NavigationManager
@@ -15,14 +16,23 @@
 
 @if (LoadedListingPlaylists != null)
 {
-    <EjsGrid DataSource="@LoadedListingPlaylists" >
+    <EjsGrid DataSource="@LoadedListingPlaylists"
+             AllowResizing="true"
+             AllowGrouping="true"
+             AllowSorting="true"
+             ShowColumnChooser="true"
+             Toolbar="@( new List<string>() { "ColumnChooser"})">
+             @*ContextMenuItems="@ContextMenuItems">*@
         <GridEvents RowSelected="SelectionHandler" TValue="ListingPlaylist"></GridEvents>
         <GridColumns>
             <GridColumn Field="@nameof(ListingPlaylist.Name)" HeaderText="Name"></GridColumn>
             <GridColumn Field="@nameof(ListingPlaylist.Owner)" HeaderText="Owner"></GridColumn>
-            <GridColumn Field="@nameof(ListingPlaylist.Public)" HeaderText="Public" Visible="false"></GridColumn>
+
             <GridColumn Field="@nameof(ListingPlaylist.TrackCount)" HeaderText="Track Count"></GridColumn>
             <GridColumn Field="@nameof(ListingPlaylist.Id)" HeaderText="ID" Visible="false"></GridColumn>
+            <!-- todo - public doesn't show true if it's someone else's public playlist -->
+            <GridColumn Field="@nameof(ListingPlaylist.Public)" HeaderText="Public" Visible="false"></GridColumn>
+            <GridColumn Field="@nameof(ListingPlaylist.Collaborative)" HeaderText="Collaborative" Visible="false"></GridColumn>
 
         </GridColumns>
     </EjsGrid>
@@ -60,4 +70,12 @@ else
     }
 
 
+    public List<MenuItem> ContextMenuItems = new List<MenuItem>
+    {
+        // https://ej2.syncfusion.com/documentation/appearance/icons/#available-icons
+        new MenuItem {Text="Export", IconCss="fas fa-file-download"},
+        new MenuItem {Text="Unfollow", IconCss="fas fa-times"}
+    };
+
+    
 }

@@ -13,31 +13,16 @@ namespace splaylist.Models
     public class ListingTrack
     {
 
-        // Following is a little hacky, but required when selecting the track in the datagrid
+        // Following is required when selecting the track in the datagrid
         [JsonConstructor]
         public ListingTrack(string id)
         {
-            _id = id;
+            Id = id;
         }
-
-        private string _id;
-
 
         [JsonProperty]
-        public string Id
-        {
-            get
-            {
-                // if the private ID is set, return that, else try and set it from the FullTrack object.
-                if (_id != null) return _id;
-                _id = FullTrack?.Id;
-                return _id;
-            }
-            set
-            {
-                _id = value;
-            }
-        }
+        public string Id { get; protected set; }
+
 
         // SimpleTrack encountered when getting tracks off a FullAlbum (simple album doesn't have track info), or recommendations.
         // Commented out as it is not relevant at this point in time (using playlists only)
@@ -55,6 +40,7 @@ namespace splaylist.Models
         {
             FullTrack = ft;
             Index = index;
+            Id = ft.Id;
         }
 
         public ListingTrack(PlaylistTrack pt, int index = -1)
@@ -62,6 +48,7 @@ namespace splaylist.Models
             PlaylistTrack = pt;
             FullTrack = pt.Track;
             Index = index;
+            Id = pt.Track.Id;
         }
 
         public ListingTrack(SavedTrack st, int index = -1)
@@ -69,6 +56,7 @@ namespace splaylist.Models
             SavedTrack = st;
             FullTrack = st.Track;
             Index = index;
+            Id = st.Track.Id;
         }
 
 
@@ -107,7 +95,7 @@ namespace splaylist.Models
             }
         }
 
-
+    
         // Not pretty, but the datagrid wasn't handling nested objects 
         public string TrackTitle => FullTrack?.Name;
         public string AlbumName => FullTrack?.Album?.Name;
@@ -123,6 +111,7 @@ namespace splaylist.Models
         // public FullAlbum FullAlbum;
 
         // Below contains genre info, retrieve from cache
+        // private List<FullArtist> _fullArtists;
         // public List<FullArtist> FullArtists;
 
         public List<string> Genres
