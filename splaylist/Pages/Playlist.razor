@@ -12,19 +12,25 @@
 
 
 
-
-<p>Loaded Artists: @CachedArtists.ToString()</p>
-<p>Analysed Tracks: @CachedAnalysis.ToString()</p>
-
-
-@if (loadedPlaylist == null)
+@if (playlistInfo == null)
 {
-    <p>Loading Playlist...</p>
+    <p>Loading Playlist Info...</p>
 }
-else if (CachedAnalysis)
+else
 {
+    <h2>@playlistInfo.Name</h2>
+    <h3>Created by @playlistInfo.Owner.DisplayName, @playlistInfo.Tracks.Total tracks</h3>
 
-    <h2>@loadedPlaylist.Name</h2>
+}
+
+@if (playlistContents == null)
+{
+    <RefreshableComponent Interval="200" Enabled="true">
+        <p>@loader.StatusString</p>
+    </RefreshableComponent>
+}
+else { 
+
     <p>Selected: @selectedText</p>
 
 
@@ -84,12 +90,13 @@ else if (CachedAnalysis)
     [Parameter]
     public string id { get; set; }
 
-    FullPlaylist loadedPlaylist;
+    // FullPlaylist loadedPlaylist;
+
+    SimplePlaylist playlistInfo;
 
     List<ListingTrack> playlistContents;
 
-    bool CachedArtists;
-    bool CachedAnalysis;
+    LoaderInfo loader;
 
     EjsGrid<ListingTrack> Grid;
     string selectedText = "";
@@ -98,12 +105,11 @@ else if (CachedAnalysis)
     {
         // todo - merge FullPlaylist with List<ListingTrack> under it
         // todo - loading status
-        loadedPlaylist = await API.S.GetPlaylistAsync(id);
-        playlistContents = await Requester.GetPlaylistTracks(loadedPlaylist);
+        loader = new LoaderInfo();
 
+        playlistInfo = Cache.SimplePlaylists[id];
+        playlistContents = await Requester.GetAndExtendPlaylist(id, loader);
 
-        CachedAnalysis = await Requester.CacheAnalysedTracks(playlistContents);
-        CachedArtists = await Requester.CacheFullArtists(playlistContents);
     }
 
 

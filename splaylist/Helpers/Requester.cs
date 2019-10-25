@@ -12,11 +12,11 @@ namespace splaylist.Helpers
     public class Requester
     {
 
-
+        // Limits
         private const int ALBUM_REQUEST_LIMIT = 20;
         private const int ARTIST_REQUEST_LIMIT = 50;
         private const int PLAYLIST_REQUEST_LIMIT = 50;
-        private const int FEATURE_REQUEST_LIMIT = 100;
+        private const int ANALYSIS_REQUEST_LIMIT = 100;
 
 
 
@@ -29,10 +29,23 @@ namespace splaylist.Helpers
         }
 
 
-        public static async Task<List<ListingTrack>> GetPlaylistTracks(FullPlaylist fp)
+        public static async Task<List<ListingTrack>> GetPlaylistTracks(FullPlaylist fp, LoaderInfo loader=null)
         {
+            return await GetPlaylistTracksWithDepage(fp, loader);
+        }
 
-            var depagedPlaylist = await Depaginator<PlaylistTrack>.Depage(fp.Tracks);
+        public static Tuple<Task<List<ListingTrack>>, LoaderInfo> GetPlaylistTracksAndLoader(FullPlaylist fp)
+        {
+            var loader = new LoaderInfo();
+            return new Tuple<Task<List<ListingTrack>>, LoaderInfo>(GetPlaylistTracksWithDepage(fp, loader), loader);
+        }
+
+        private static async Task<List<ListingTrack>> GetPlaylistTracksWithDepage(FullPlaylist fp, LoaderInfo loader=null)
+        {
+            List<PlaylistTrack> depagedPlaylist;
+
+            depagedPlaylist = await Depaginator<PlaylistTrack>.Depage(fp.Tracks, loader);
+            
 
             var results = new List<ListingTrack>();
 
@@ -133,9 +146,9 @@ namespace splaylist.Helpers
         public static async Task<bool> CacheAnalysedTracks(List<string> ids)
         {
             // Split the list so that it doesn't exceed 20 albums at one time
-            if (ids.Count > FEATURE_REQUEST_LIMIT)
+            if (ids.Count > ANALYSIS_REQUEST_LIMIT)
             {
-                SplitList(CacheAnalysedTracks, ids, FEATURE_REQUEST_LIMIT);
+                SplitList(CacheAnalysedTracks, ids, ANALYSIS_REQUEST_LIMIT);
             }
 
 
@@ -167,6 +180,21 @@ namespace splaylist.Helpers
                 }
             }
 
+        }
+
+
+        public static async Task<List<ListingTrack>> GetAndExtendPlaylist(string id, LoaderInfo loader)
+        {
+            var fullPlaylist = await API.S.GetPlaylistAsync(id);
+
+            loader.LoaderStage = LoaderInfo.Stage.Tracks;
+            var playlistContents = await Requester.GetPlaylistTracksWithDepage(fullPlaylist, loader);
+            loader.LoaderStage = LoaderInfo.Stage.Artists;
+            
+            var CachedAnalysis = await Requester.CacheAnalysedTracks(playlistContents);
+            var CachedArtists = await Requester.CacheFullArtists(playlistContents);
+
+            return playlistContents;
         }
     }
 }

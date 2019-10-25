@@ -22,6 +22,7 @@ namespace splaylist.Models
 
         // splaylist's custom objects
         // public static Dictionary<string, Track> Tracks;
+        public static Dictionary<string, SimplePlaylist> SimplePlaylists;
         public static Dictionary<string, FullPlaylist> FullPlaylists;
 
         // A user's loaded playlists
@@ -42,6 +43,7 @@ namespace splaylist.Models
 
             // Tracks = new Dictionary<string, Track>();
             FullPlaylists = new Dictionary<string, FullPlaylist>();
+            SimplePlaylists = new Dictionary<string, SimplePlaylist>();
         }
 
         // Simple / full artists / albums
@@ -99,6 +101,10 @@ namespace splaylist.Models
             AnalysedTracks[af.Id] = af;
         }
 
+        public static void Save(SimplePlaylist sp)
+        {
+            SimplePlaylists[sp.Id] = sp;
+        }
 
     }
 }
