@@ -18,24 +18,17 @@ namespace splaylist.Helpers
 
         internal static async Task<List<T>> Depage(Paging<T> page, LoaderInfo loader=null)
         {
-            // if no loader is passed, create one and pretend it doesn't exist
-            //
-            if (loader == null) loader = new LoaderInfo();
-
-            var ProgressItems = new List<T>();
+            var ProgressItems = page.Items;
             var passedPage = page;
-            loader.Available = page.Total;
-
-            // Retrieve items from page passed in argument
-            ProgressItems = page.Items;
-            loader.Loaded = ProgressItems.Count;
+            loader?.SetAvailable(page.Total);
+            loader?.SetLoaded(ProgressItems.Count);
 
             // then iterate over all the next pages
             while (page.HasNextPage())
             {
                 page = await API.S.GetNextPageAsync(page);
                 ProgressItems.AddRange(page.Items);
-                loader.Loaded = ProgressItems.Count;
+                loader?.SetLoaded(ProgressItems.Count);
             }
 
             // Handle previous pages if supplied page parameter was not the first page
@@ -43,17 +36,10 @@ namespace splaylist.Helpers
             {
                 passedPage = await API.S.GetPreviousPageAsync(passedPage);
                 ProgressItems.AddRange(passedPage.Items);
-                loader.Loaded = ProgressItems.Count;
+                loader?.SetLoaded(ProgressItems.Count);
             }
 
             return ProgressItems;
-        }
-
-
-        internal static Tuple<Task<List<T>>, LoaderInfo> DepageWithStatus(Paging<T> page)
-        {
-            LoaderInfo loader = new LoaderInfo();
-            return new Tuple<Task<List<T>>, LoaderInfo>(Depage(page, loader), loader);
         }
 
 

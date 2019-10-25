@@ -22,18 +22,9 @@ namespace splaylist.Models
             Done = 15
         }
 
-        private Stage _loaderStatus;
 
-        public Stage LoaderStage { 
-            get { return _loaderStatus; } 
-            internal set
-            {
-                // clear count when changing stage
-                Loaded = 0;
-                Available = 0;
-                _loaderStatus = value;
-            }
-        }
+
+        public Stage LoaderStage { get; internal set; }
 
         public string StatusString { get
             {
@@ -59,9 +50,15 @@ namespace splaylist.Models
 
 
         // so count can be added without necessarily causing a null reference exception
-        public int AddLoaded(int count)
+        public int SetLoaded(int count) { return Loaded = count; }
+
+        public int SetAvailable(int count) { return Available = count; }
+
+        public void ChangeStage(Stage stage, int available)
         {
-            return Loaded += count;
+            LoaderStage = stage;
+            Available = available;
+            Loaded = 0;
         }
 
     }

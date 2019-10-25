@@ -48,7 +48,7 @@ namespace splaylist.Helpers
         /// <param name="ids">List of IDs in string form</param>
         /// <param name="limit">The limit corresponding to this request</param>
         /// <returns>true on success, false on error</returns>
-        private static async Task<bool> SplitRequestIDs(Func<List<string>, Task<bool>> cacher, List<string> ids, int limit)
+        private static async Task<bool> SplitRequestIDs(Func<List<string>, LoaderInfo, Task<bool>> cacher, List<string> ids, int limit, LoaderInfo loader=null)
         {
             bool success = true;
 
@@ -58,12 +58,15 @@ namespace splaylist.Helpers
                 if (i + limit > ids.Count)
                 {
                     // change the success variable only if it returned false
-                    if (!await cacher(ids.GetRange(i, ids.Count - i))) success = false;
+                    if (!await cacher(ids.GetRange(i, ids.Count - i), loader)) success = false;
+                    
                 }
                 else
                 {
-                    if (!await cacher(ids.GetRange(i, limit))) success = false;
+                    if (!await cacher(ids.GetRange(i, limit), loader)) success = false;
+                    
                 }
+                loader?.SetLoaded(i);
             }
 
             return success;
@@ -111,11 +114,11 @@ namespace splaylist.Helpers
 
 
 
-        public static async Task<bool> CacheFullAlbums(List<string> ids)
+        public static async Task<bool> CacheFullAlbums(List<string> ids, LoaderInfo loader = null)
         {
             // Split the list so that it doesn't exceed 20 albums at one time
             if (ids.Count > ALBUM_REQUEST_LIMIT)
-                return await SplitRequestIDs(CacheFullAlbums, ids, ALBUM_REQUEST_LIMIT);
+                return await SplitRequestIDs(CacheFullAlbums, ids, ALBUM_REQUEST_LIMIT, loader);
 
             var request = await API.S.GetSeveralAlbumsAsync(ids);
             if (request.HasError()) return false;
@@ -124,10 +127,10 @@ namespace splaylist.Helpers
         }
 
 
-        public static async Task<bool> CacheFullArtists(List<string> ids)
+        public static async Task<bool> CacheFullArtists(List<string> ids, LoaderInfo loader = null)
         {
             if (ids.Count > ARTIST_REQUEST_LIMIT)
-                return await SplitRequestIDs(CacheFullArtists, ids, ARTIST_REQUEST_LIMIT);
+                return await SplitRequestIDs(CacheFullArtists, ids, ARTIST_REQUEST_LIMIT, loader);
 
             var request = await API.S.GetSeveralArtistsAsync(ids);
             if (request.HasError()) return false;
@@ -136,11 +139,11 @@ namespace splaylist.Helpers
         }
 
 
-        public static async Task<bool> CacheAnalysedTracks(List<string> ids)
+        public static async Task<bool> CacheAnalysedTracks(List<string> ids, LoaderInfo loader = null)
         {
             // Split the list so that it doesn't exceed 20 albums at one time
             if (ids.Count > ANALYSIS_REQUEST_LIMIT)
-                return await SplitRequestIDs(CacheAnalysedTracks, ids, ANALYSIS_REQUEST_LIMIT);
+                return await SplitRequestIDs(CacheAnalysedTracks, ids, ANALYSIS_REQUEST_LIMIT, loader);
 
             var request = await API.S.GetSeveralAudioFeaturesAsync(ids);
             if (request.HasError()) return false;
@@ -158,16 +161,20 @@ namespace splaylist.Helpers
         {
             var fullPlaylist = await API.S.GetPlaylistAsync(id);
 
-            loader.LoaderStage = LoaderInfo.Stage.Tracks;
+            loader?.ChangeStage(LoaderInfo.Stage.Tracks, 0);
             var playlistContents = await Requester.GetPlaylistTracks(fullPlaylist, loader);
 
             var retrievedIDs = ExtractIDsFromPlaylist(playlistContents);
 
-            loader.LoaderStage = LoaderInfo.Stage.Analysis;
-            var CachedAnalysis = await Requester.CacheAnalysedTracks(retrievedIDs.TrackIDs);
+            loader?.ChangeStage(LoaderInfo.Stage.Analysis, retrievedIDs.TrackIDs.Count);
+            var CachedAnalysis = await Requester.CacheAnalysedTracks(retrievedIDs.TrackIDs, loader);
 
-            loader.LoaderStage = LoaderInfo.Stage.Artists;
-            var CachedArtists = await Requester.CacheFullArtists(retrievedIDs.ArtistIDs);
+            loader?.ChangeStage(LoaderInfo.Stage.Artists, retrievedIDs.ArtistIDs.Count);
+            var CachedArtists = await Requester.CacheFullArtists(retrievedIDs.ArtistIDs, loader);
+
+            // Album is no use unless you want album popularity or the label of an album
+            // loader?.ChangeStage(LoaderInfo.Stage.Albums, retrievedIDs.AlbumIDs.Count);
+            // var CachedAlbums = await Requester.CacheFullAlbums(retrievedIDs.AlbumIDs, loader);
 
             return playlistContents;
         }
