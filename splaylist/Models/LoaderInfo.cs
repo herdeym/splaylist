@@ -11,7 +11,7 @@ namespace splaylist.Models
         public int Available { get; internal set; }
 
 
-        [Flags]
+        // [Flags]   // no good for StatusString 
         public enum Stage
         {
             None = 0,
@@ -22,7 +22,18 @@ namespace splaylist.Models
             Done = 15
         }
 
-        public Stage LoaderStage { get; internal set; }
+        private Stage _loaderStatus;
+
+        public Stage LoaderStage { 
+            get { return _loaderStatus; } 
+            internal set
+            {
+                // clear count when changing stage
+                Loaded = 0;
+                Available = 0;
+                _loaderStatus = value;
+            }
+        }
 
         public string StatusString { get
             {
@@ -44,6 +55,13 @@ namespace splaylist.Models
                 }
 
             } 
+        }
+
+
+        // so count can be added without necessarily causing a null reference exception
+        public int AddLoaded(int count)
+        {
+            return Loaded += count;
         }
 
     }
