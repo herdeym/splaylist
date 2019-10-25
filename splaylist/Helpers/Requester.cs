@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace splaylist.Helpers
 {
+    /// <summary>
+    /// Retrieve information from cache
+    /// </summary>
     public class Requester
     {
 
@@ -16,11 +19,11 @@ namespace splaylist.Helpers
         private const int FEATURE_REQUEST_LIMIT = 100;
 
 
+
         public static async Task<List<SimplePlaylist>> GetUserPlaylistsAsync(string UserID)
         {
             var firstPage = await API.S.GetUserPlaylistsAsync(UserID, PLAYLIST_REQUEST_LIMIT);
-            var depaginate = new Depaginator<SimplePlaylist>();
-            var results = await depaginate.Depage(firstPage);
+            var results = await Depaginator<SimplePlaylist>.Depage(firstPage);
             Cache.LoadedPlaylists = results;
             return results;
         }
@@ -28,8 +31,8 @@ namespace splaylist.Helpers
 
         public static async Task<List<ListingTrack>> GetPlaylistTracks(FullPlaylist fp)
         {
-            var depager = new Depaginator<PlaylistTrack>();
-            var depagedPlaylist = await depager.Depage(fp.Tracks);
+
+            var depagedPlaylist = await Depaginator<PlaylistTrack>.Depage(fp.Tracks);
 
             var results = new List<ListingTrack>();
 
@@ -41,6 +44,7 @@ namespace splaylist.Helpers
 
                 // Cache just the FullTrack
                 Cache.Save(playlistTrack.Track);
+                
             }
 
             return results;
