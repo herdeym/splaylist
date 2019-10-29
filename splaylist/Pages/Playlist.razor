@@ -40,8 +40,10 @@ else {
              AllowFiltering="true"
              AllowGrouping="true"
              AllowSelection="true"
+             AllowResizing="true"
+             AllowReordering="true"
              ShowColumnChooser="true"
-             Toolbar="@(new List<object>() { new ToolbarItem { Text = "Export" }, "ColumnChooser"})">
+             Toolbar="@(new List<object>() { /*new ToolbarItem { Text = "Export" },*/ "ColumnChooser"})">
         @*ContextMenuItems="@(new List<object>() { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Delete", "Save", "Cancel"})">*@
 
 
@@ -53,7 +55,7 @@ else {
             <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
             <GridColumn Field="@nameof(ListingTrack.Index)" HeaderText="#" Visible="false" IsPrimaryKey="true"></GridColumn>
 
-            <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title"></GridColumn>
+            <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title" ></GridColumn>
             <GridColumn Field="@nameof(ListingTrack.AlbumName)" HeaderText="Album"></GridColumn>
             <GridColumn Field="@nameof(ListingTrack.ArtistString)" HeaderText="Artists"></GridColumn>
             <GridColumn Field="@nameof(ListingTrack.Genres)" HeaderText="Genre"></GridColumn>
@@ -106,10 +108,11 @@ else {
         // todo - merge FullPlaylist with List<ListingTrack> under it
         loader = new LoadingStatus();
 
-        playlistInfo = Cache.SimplePlaylists[id];
+        playlistInfo = Cache.GetSimplePlaylist(id);
         playlistContents = await Requester.GetAndExtendPlaylist(id, loader);
 
     }
+
 
 
 

@@ -80,19 +80,8 @@ namespace splaylist.Models
             get
             {
                 if (_analysed != null) return _analysed;
-
-                // hm, had a null reference exception
-                if (Id == null) return null;
-
-                if (Cache.AnalysedTracks.TryGetValue(Id, out var result))
-                {
-                    _analysed = result;
-                    return result;
-                }
-
-                // If we're waiting on the tunable track, add it to the cache's pending list
-                // Cache.PendingTuning[FullTrack.Id] = FullTrack;
-                return null;
+                _analysed = Cache.GetAnalysedTrack(Id);
+                return _analysed;
             }
         }
 
@@ -119,16 +108,8 @@ namespace splaylist.Models
         {
             get
             {
-                // hack because I haven't removed local tracks from the playlist yet
-                if (FullTrack?.Artists[0]?.Id == null) return null;
-
                 // TODO - correct for multiple artists
-                if (Cache.FullArtists.TryGetValue(FullTrack?.Artists[0]?.Id, out var artist))
-                {
-                    return artist.Genres;
-                }
-
-                return null;
+                return Cache.GetFullArtist(FullTrack?.Artists[0]?.Id)?.Genres;
             }
         }
 

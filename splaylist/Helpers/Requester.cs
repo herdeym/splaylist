@@ -39,7 +39,7 @@ namespace splaylist.Helpers
                 }
             }
 
-            // and return as lists (not IList), as SpotifyAPI-NET's methods only take lists
+            // and return as lists (not IList as SpotifyAPI-NET's methods only take lists)
             return (trackIDs.ToList(), artistIDs.ToList(), albumIDs.ToList());
         }
 
@@ -114,7 +114,7 @@ namespace splaylist.Helpers
                 results.Add(new ListingTrack(playlistTrack, i));
 
                 // Cache just the FullTrack
-                Cache.Save(playlistTrack.Track);
+                // Cache.Save(playlistTrack.Track);
 
             }
 
@@ -164,10 +164,16 @@ namespace splaylist.Helpers
 
 
 
+        /// <summary>
+        /// Negate a method in a linq query 
+        /// https://stackoverflow.com/questions/43609039/negate-where-linq-expression
+        /// used for reducing the amount of requests made if something exists in the cache
+        /// </summary>
+        private static Func<string, bool> Not(Func<string, bool> method) => x => !method(x);
 
 
 
-        public static async Task<List<ListingTrack>> GetAndExtendPlaylist(string id, LoadingStatus status)
+        public static async Task<List<ListingTrack>> GetAndExtendPlaylist(string id, LoadingStatus status = null, bool forceUpdate = false)
         {
             var fullPlaylist = await API.S.GetPlaylistAsync(id);
 
@@ -177,10 +183,13 @@ namespace splaylist.Helpers
             var retrievedIDs = ExtractIDsFromPlaylist(playlistContents);
             
             status?.ChangeStage(LoadingStatus.Stage.Analysis, retrievedIDs.TrackIDs.Count);
-            var CachedAnalysis = await Requester.CacheAnalysedTracks(retrievedIDs.TrackIDs, status);
+            // if we're not forcing a fresh request, use a linq function to filter out any tracks already cached, ToList as SpotifyAPI-NET can't handle enumerable
+            if (!forceUpdate) await Requester.CacheAnalysedTracks(retrievedIDs.TrackIDs.Where(Not(Cache.HasAnalysedTrack)).ToList(), status);
+            else await Requester.CacheAnalysedTracks(retrievedIDs.TrackIDs, status);
 
             status?.ChangeStage(LoadingStatus.Stage.Artists, retrievedIDs.ArtistIDs.Count);
-            var CachedArtists = await Requester.CacheFullArtists(retrievedIDs.ArtistIDs, status);
+            if (!forceUpdate) await Requester.CacheFullArtists(retrievedIDs.ArtistIDs.Where(Not(Cache.HasFullArtist)).ToList(), status);
+            else await Requester.CacheFullArtists(retrievedIDs.ArtistIDs, status);
 
             // Album is no use unless you want album popularity or the label of an album
             // status?.ChangeStage(LoaderInfo.Stage.Albums, retrievedIDs.AlbumIDs.Count);
