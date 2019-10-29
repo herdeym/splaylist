@@ -1,0 +1,18 @@
+﻿@using splaylist.Helpers
+@inject API  api
+
+
+@if (api.IsAuthenticated())
+{
+    @ChildContent
+} else
+{
+    <h3>You must be logged in to view this page.</h3>
+}
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

@@ -85,6 +85,7 @@ namespace splaylist.Helpers
         /// <returns></returns>
         public static async Task<List<ListingPlaylist>> GetUserPlaylistListing(string userID, bool forceRequest=false)
         {
+            if (userID == null) return null; // to handle it when the user isn't logged in
             if (!forceRequest && Cache.UsersPlaylists != null) return Cache.UsersPlaylists;
             var firstPage = await API.S.GetUserPlaylistsAsync(userID, PLAYLIST_REQUEST_LIMIT);
             var results = await Depaginator<SimplePlaylist>.Depage(firstPage);

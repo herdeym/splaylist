@@ -10,7 +10,7 @@
 @inject NavigationManager NavigationManager
 @inject Cache Cache
 
-
+<NeedsAuthentication>
 <p>User: @api.UserProfile.DisplayName</p>
 <p>User ID: @api.UserProfile.Id</p>
 
@@ -42,7 +42,7 @@ else
 {
     <p>Loading Playlists...</p>
 }
-
+</NeedsAuthentication>
 
 
 @code {
@@ -51,7 +51,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _loadedListingPlaylists = await Requester.GetUserPlaylistListing(api.UserProfile.Id);
+        _loadedListingPlaylists = await Requester.GetUserPlaylistListing(api?.UserProfile?.Id);
 
     }
 
