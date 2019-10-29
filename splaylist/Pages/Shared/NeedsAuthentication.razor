@@ -5,7 +5,7 @@
 @if (api.IsAuthenticated())
 {
     @ChildContent
-} else
+} else if (!Silent)
 {
     <h3>You must be logged in to view this page.</h3>
 }
@@ -15,4 +15,6 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
+    [Parameter]
+    public bool Silent { get; set; }
 }
