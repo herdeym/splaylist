@@ -75,9 +75,9 @@ namespace splaylist.Helpers
 
 
 
-        public static async Task<List<SimplePlaylist>> GetUserPlaylistsAsync(string UserID)
+        public static async Task<List<SimplePlaylist>> GetUserPlaylistsAsync(string userID)
         {
-            var firstPage = await API.S.GetUserPlaylistsAsync(UserID, PLAYLIST_REQUEST_LIMIT);
+            var firstPage = await API.S.GetUserPlaylistsAsync(userID, PLAYLIST_REQUEST_LIMIT);
             var results = await Depaginator<SimplePlaylist>.Depage(firstPage);
             Cache.LoadedPlaylists = results;
             return results;

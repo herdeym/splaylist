@@ -23,8 +23,8 @@ namespace splaylist.Helpers
         private static string _clientID = "8061b5bc221041f39b7ef54c58113f09";
         private static string _callbackURI = "https://localhost:44326/callback";
 
-        public static string ClientID { get { return _clientID; } }
-        public static string CallbackURI { get { return _callbackURI; } }
+        public static string ClientID => _clientID;
+        public static string CallbackURI => _callbackURI;
 
         public static bool ShowSpotifyPermissions = false;
 

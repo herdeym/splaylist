@@ -1,7 +1,7 @@
 ﻿using SpotifyAPI.Web.Models;
 using System.Collections.Generic;
 
-namespace splaylist.Models
+namespace splaylist.Helpers
 {
     public class Cache
     {

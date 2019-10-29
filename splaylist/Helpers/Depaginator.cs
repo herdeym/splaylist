@@ -18,28 +18,28 @@ namespace splaylist.Helpers
 
         internal static async Task<List<T>> Depage(Paging<T> page, LoadingStatus status=null)
         {
-            var ProgressItems = page.Items;
+            var loadedItems = page.Items;
             var passedPage = page;
             status?.SetAvailable(page.Total);
-            status?.SetLoaded(ProgressItems.Count);
+            status?.SetLoaded(loadedItems.Count);
 
             // then iterate over all the next pages
             while (page.HasNextPage())
             {
                 page = await API.S.GetNextPageAsync(page);
-                ProgressItems.AddRange(page.Items);
-                status?.SetLoaded(ProgressItems.Count);
+                loadedItems.AddRange(page.Items);
+                status?.SetLoaded(loadedItems.Count);
             }
 
             // Handle previous pages if supplied page parameter was not the first page
             while (passedPage.HasPreviousPage())
             {
                 passedPage = await API.S.GetPreviousPageAsync(passedPage);
-                ProgressItems.AddRange(passedPage.Items);
-                status?.SetLoaded(ProgressItems.Count);
+                loadedItems.AddRange(passedPage.Items);
+                status?.SetLoaded(loadedItems.Count);
             }
 
-            return ProgressItems;
+            return loadedItems;
         }
 
 
