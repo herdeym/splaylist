@@ -16,19 +16,19 @@ namespace splaylist.Helpers
     {
 
 
-        internal static async Task<List<T>> Depage(Paging<T> page, LoaderInfo loader=null)
+        internal static async Task<List<T>> Depage(Paging<T> page, LoadingStatus status=null)
         {
             var ProgressItems = page.Items;
             var passedPage = page;
-            loader?.SetAvailable(page.Total);
-            loader?.SetLoaded(ProgressItems.Count);
+            status?.SetAvailable(page.Total);
+            status?.SetLoaded(ProgressItems.Count);
 
             // then iterate over all the next pages
             while (page.HasNextPage())
             {
                 page = await API.S.GetNextPageAsync(page);
                 ProgressItems.AddRange(page.Items);
-                loader?.SetLoaded(ProgressItems.Count);
+                status?.SetLoaded(ProgressItems.Count);
             }
 
             // Handle previous pages if supplied page parameter was not the first page
@@ -36,7 +36,7 @@ namespace splaylist.Helpers
             {
                 passedPage = await API.S.GetPreviousPageAsync(passedPage);
                 ProgressItems.AddRange(passedPage.Items);
-                loader?.SetLoaded(ProgressItems.Count);
+                status?.SetLoaded(ProgressItems.Count);
             }
 
             return ProgressItems;

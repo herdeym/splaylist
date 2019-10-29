@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace splaylist.Models
 {
-    public class LoaderInfo
+    public class LoadingStatus
     {
         public int Loaded { get; internal set; }
         public int Available { get; internal set; }

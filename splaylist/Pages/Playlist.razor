@@ -96,7 +96,7 @@ else {
 
     List<ListingTrack> playlistContents;
 
-    LoaderInfo loader;
+    LoadingStatus loader;
 
     EjsGrid<ListingTrack> Grid;
     string selectedText = "";
@@ -105,7 +105,7 @@ else {
     {
         // todo - merge FullPlaylist with List<ListingTrack> under it
         // todo - loading status
-        loader = new LoaderInfo();
+        loader = new LoadingStatus();
 
         playlistInfo = Cache.SimplePlaylists[id];
         playlistContents = await Requester.GetAndExtendPlaylist(id, loader);
@@ -131,7 +131,7 @@ else {
     }
 
     private List<ListingTrack> selected;
-    
+
     public async void TracksSelected()
     {
         var fromGrid = await Grid.GetSelectedRecords();
