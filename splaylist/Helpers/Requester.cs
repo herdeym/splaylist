@@ -3,6 +3,7 @@ using SpotifyAPI.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace splaylist.Helpers
 {
@@ -22,9 +23,10 @@ namespace splaylist.Helpers
 
         private static (List<string> TrackIDs, List<string> ArtistIDs, List<string> AlbumIDs) ExtractIDsFromPlaylist(List<ListingTrack> playlist)
         {
-            var trackIDs = new List<string>();
-            var artistIDs = new List<string>();
-            var albumIDs = new List<string>();
+            // use HashSets to remove duplicate IDs
+            var trackIDs = new HashSet<string>();
+            var artistIDs = new HashSet<string>();
+            var albumIDs = new HashSet<string>();
 
             foreach (var track in playlist)
             {
@@ -37,7 +39,8 @@ namespace splaylist.Helpers
                 }
             }
 
-            return (trackIDs, artistIDs, albumIDs);
+            // and return as lists (not IList), as SpotifyAPI-NET's methods only take lists
+            return (trackIDs.ToList(), artistIDs.ToList(), albumIDs.ToList());
         }
 
 
@@ -172,7 +175,7 @@ namespace splaylist.Helpers
             var playlistContents = await Requester.GetPlaylistTracks(fullPlaylist, status);
 
             var retrievedIDs = ExtractIDsFromPlaylist(playlistContents);
-
+            
             status?.ChangeStage(LoadingStatus.Stage.Analysis, retrievedIDs.TrackIDs.Count);
             var CachedAnalysis = await Requester.CacheAnalysedTracks(retrievedIDs.TrackIDs, status);
 

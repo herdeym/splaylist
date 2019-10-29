@@ -34,7 +34,6 @@ namespace splaylist.Helpers
             FullArtists[fa.Id] = fa;
         }
 
-
         public static void Save(FullAlbum fa)
         {
             FullAlbums[fa.Id] = fa;
@@ -44,7 +43,6 @@ namespace splaylist.Helpers
         {
             // FullTracks contain objects for SimpleAlbum and SimpleArtist, but they're not much use to us
             FullTracks[fa.Id] = fa;
-
         }
 
         public static void Save(FullPlaylist fp) 
