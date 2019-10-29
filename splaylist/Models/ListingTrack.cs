@@ -2,6 +2,7 @@
 using SpotifyAPI.Web.Models;
 using System;
 using System.Collections.Generic;
+using splaylist.Helpers;
 
 namespace splaylist.Models
 {
@@ -90,7 +91,7 @@ namespace splaylist.Models
                 }
 
                 // If we're waiting on the tunable track, add it to the cache's pending list
-                Cache.PendingTuning[FullTrack.Id] = FullTrack;
+                // Cache.PendingTuning[FullTrack.Id] = FullTrack;
                 return null;
             }
         }
