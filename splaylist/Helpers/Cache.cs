@@ -1,5 +1,6 @@
 ﻿using SpotifyAPI.Web.Models;
 using System.Collections.Generic;
+using splaylist.Models;
 
 namespace splaylist.Helpers
 {
@@ -14,7 +15,7 @@ namespace splaylist.Helpers
         public static Dictionary<string, FullPlaylist> FullPlaylists;
 
         // A user's loaded playlists
-        public static List<SimplePlaylist> LoadedPlaylists;
+        public static List<ListingPlaylist> UsersPlaylists { get; set; }
 
         public Cache()
         {
@@ -25,9 +26,6 @@ namespace splaylist.Helpers
             FullTracks = new Dictionary<string, FullTrack>();
             AnalysedTracks = new Dictionary<string, AudioFeatures>();
         }
-
-        
-        // no point saving simple objects as they'll be contained by FullTrack
 
         // NOTE - Dictionary syntax is dict[key] = value; not dict.Add(key, value); due to exceptions occuring when a key already exists
 
@@ -42,10 +40,11 @@ namespace splaylist.Helpers
             FullAlbums[fa.Id] = fa;
         }
 
-        // Tracks - come with simple information which must be added
         public static void Save(FullTrack fa)
         {
+            // FullTracks contain objects for SimpleAlbum and SimpleArtist, but they're not much use to us
             FullTracks[fa.Id] = fa;
+
         }
 
         public static void Save(FullPlaylist fp) 

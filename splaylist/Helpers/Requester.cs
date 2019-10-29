@@ -74,13 +74,27 @@ namespace splaylist.Helpers
 
 
 
-
-        public static async Task<List<SimplePlaylist>> GetUserPlaylistsAsync(string userID)
+        /// <summary>
+        /// Gets a user's playlists as a list of ListingPlaylist objects
+        /// </summary>
+        /// <param name="userID">The ID of the user to look up.</param>
+        /// <param name="forceRequest">If false, this function will attempt to return the result from the cache first. If true, it will always make a fresh request and update the cache.</param>
+        /// <returns></returns>
+        public static async Task<List<ListingPlaylist>> GetUserPlaylistListing(string userID, bool forceRequest=false)
         {
+            if (!forceRequest && Cache.UsersPlaylists != null) return Cache.UsersPlaylists;
             var firstPage = await API.S.GetUserPlaylistsAsync(userID, PLAYLIST_REQUEST_LIMIT);
             var results = await Depaginator<SimplePlaylist>.Depage(firstPage);
-            Cache.LoadedPlaylists = results;
-            return results;
+
+            var lp = new List<ListingPlaylist>();
+            foreach (var playlist in results)
+            {
+                lp.Add(new ListingPlaylist(playlist));
+                Cache.Save(playlist);
+            }
+
+            Cache.UsersPlaylists = lp;
+            return lp;
         }
 
 
@@ -171,5 +185,7 @@ namespace splaylist.Helpers
 
             return playlistContents;
         }
+
+
     }
 }

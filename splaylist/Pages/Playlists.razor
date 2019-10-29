@@ -14,9 +14,9 @@
 <p>User: @api.UserProfile.DisplayName</p>
 <p>User ID: @api.UserProfile.Id</p>
 
-@if (LoadedListingPlaylists != null)
+@if (_loadedListingPlaylists != null)
 {
-    <EjsGrid DataSource="@LoadedListingPlaylists"
+    <EjsGrid DataSource="@_loadedListingPlaylists"
              AllowResizing="true"
              AllowGrouping="true"
              AllowSorting="true"
@@ -47,18 +47,11 @@ else
 
 @code {
 
-    List<ListingPlaylist> LoadedListingPlaylists;
+    List<ListingPlaylist> _loadedListingPlaylists;
 
     protected override async Task OnInitializedAsync()
     {
-        var simpleplaylists = await Requester.GetUserPlaylistsAsync(api.UserProfile.Id);
-        var lp = new List<ListingPlaylist>();
-        foreach (var playlist in simpleplaylists)
-        {
-            lp.Add(new ListingPlaylist(playlist));
-            Cache.Save(playlist);
-        }
-        LoadedListingPlaylists = lp;
+        _loadedListingPlaylists = await Requester.GetUserPlaylistListing(api.UserProfile.Id);
 
     }
 
