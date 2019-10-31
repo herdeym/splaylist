@@ -90,15 +90,16 @@ namespace splaylist.Helpers
             var firstPage = await API.S.GetUserPlaylistsAsync(userID, PLAYLIST_REQUEST_LIMIT);
             var results = await Depaginator<SimplePlaylist>.Depage(firstPage);
 
-            var lp = new List<ListingPlaylist>();
+            var userplaylists = new List<ListingPlaylist>();
             foreach (var playlist in results)
             {
-                lp.Add(new ListingPlaylist(playlist));
-                Cache.Save(playlist);
+                var lp = new ListingPlaylist(playlist);
+                userplaylists.Add(lp);
+                Cache.Save(lp);
             }
 
-            Cache.UsersPlaylists = lp;
-            return lp;
+            Cache.UsersPlaylists = userplaylists;
+            return userplaylists;
         }
 
 
@@ -113,10 +114,6 @@ namespace splaylist.Helpers
             {
                 PlaylistTrack playlistTrack = depagedPlaylist[i];
                 results.Add(new ListingTrack(playlistTrack, i));
-
-                // Cache just the FullTrack
-                // Cache.Save(playlistTrack.Track);
-
             }
 
             return results;
@@ -174,14 +171,15 @@ namespace splaylist.Helpers
 
 
 
-        public static async Task<List<ListingTrack>> GetAndExtendPlaylist(string id, LoadingStatus status = null, bool forceUpdate = false)
+        public static async Task<ListingPlaylist> GetAndExtendPlaylist(string id, LoadingStatus status = null, bool forceUpdate = false)
         {
             var fullPlaylist = await API.S.GetPlaylistAsync(id);
+            var listingPlaylist = new ListingPlaylist(fullPlaylist);
 
             status?.ChangeStage(LoadingStatus.Stage.Tracks, 0);
-            var playlistContents = await Requester.GetPlaylistTracks(fullPlaylist, status);
+            listingPlaylist.Tracks = await Requester.GetPlaylistTracks(fullPlaylist, status);
 
-            var retrievedIDs = ExtractIDsFromPlaylist(playlistContents);
+            var retrievedIDs = ExtractIDsFromPlaylist(listingPlaylist.Tracks);
             
             status?.ChangeStage(LoadingStatus.Stage.Analysis, retrievedIDs.TrackIDs.Count);
             // if we're not forcing a fresh request, use a linq function to filter out any tracks already cached, ToList as SpotifyAPI-NET can't handle enumerable
@@ -196,7 +194,12 @@ namespace splaylist.Helpers
             // status?.ChangeStage(LoaderInfo.Stage.Albums, retrievedIDs.AlbumIDs.Count);
             // var CachedAlbums = await Requester.CacheFullAlbums(retrievedIDs.AlbumIDs, status);
 
-            return playlistContents;
+            // no real use since the table starts rendering and the site hangs before RefreshableComponent ticks over on this
+            status?.ChangeStage(LoadingStatus.Stage.Rendering, 0);
+
+            Cache.Save(listingPlaylist);
+            listingPlaylist.IsLoaded = true;
+            return listingPlaylist;
         }
 
 

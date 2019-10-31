@@ -19,7 +19,8 @@ namespace splaylist.Models
             Artists = 2,
             Analysis = 4,
             Albums = 8,
-            Done = 15
+            Rendering = 16,
+            Done = 32
         }
 
 
@@ -40,6 +41,8 @@ namespace splaylist.Models
                         return $"Analysed {Loaded} of {Available} tracks";
                     case Stage.Albums:
                         return $"Loaded {Loaded} of {Available} albums";
+                    case Stage.Rendering:
+                        return "Rendering...";
                     case Stage.Done:
                     default:
                         return "Loading...";

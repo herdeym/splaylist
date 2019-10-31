@@ -13,18 +13,18 @@
 
 <NeedsAuthentication>
 
-    @if (playlistInfo == null)
+    @if (playlist == null)
     {
         <p>Loading Playlist Info...</p>
     }
     else
     {
-        <h2>@playlistInfo.Name</h2>
-        <h3>Created by @playlistInfo.Owner.DisplayName, @playlistInfo.Tracks.Total tracks</h3>
+        <h2>@playlist.Name</h2>
+        <h3>Created by @playlist.Owner, @playlist.TrackCount tracks</h3>
 
-    }
 
-    @if (playlistContents == null)
+
+    @if (!playlist.IsLoaded)
     {
         <RefreshableComponent Interval="200" Enabled="true">
             <p>@loader.StatusString</p>
@@ -33,10 +33,15 @@
     else
     {
 
+        @if (Grid == null)
+        {
+            <p>loading table...</p>
+        }
+
         <p>Selected: @selectedText</p>
 
 
-        <EjsGrid DataSource="@playlistContents"
+        <EjsGrid DataSource="@playlist.Tracks"
                  @ref="@Grid"
                  AllowSorting="true"
                  AllowFiltering="true"
@@ -45,7 +50,7 @@
                  AllowResizing="true"
                  AllowReordering="true"
                  ShowColumnChooser="true"
-                 Toolbar="@(new List<object>() { /*new ToolbarItem { Text = "Export" },*/ "ColumnChooser"})">
+                 Toolbar="@(new List<object>() { /*new ToolbarItem { Text = "Export" },*/ "ColumnChooser" })">
             @*ContextMenuItems="@(new List<object>() { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Delete", "Save", "Cancel"})">*@
 
 
@@ -74,18 +79,19 @@
                 <GridColumn Field="@nameof(ListingTrack.TimeSignatureString)" HeaderText="Time Signature" Visible="false"></GridColumn>
 
                 <GridColumn Field="@nameof(ListingTrack.Acousticness)" HeaderText="Acousticness" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Danceability)" HeaderText="Danceability" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Energy)" HeaderText="Energy" Visible="false"></GridColumn>
+                <GridColumn Field="@nameof(ListingTrack.Danceability)" HeaderText="Danceability" Visible="true"></GridColumn>
+                <GridColumn Field="@nameof(ListingTrack.Energy)" HeaderText="Energy" Visible="true"></GridColumn>
                 <GridColumn Field="@nameof(ListingTrack.Instrumentalness)" HeaderText="Instrumentalness" Visible="false"></GridColumn>
                 <GridColumn Field="@nameof(ListingTrack.Liveness)" HeaderText="Liveness" Visible="false"></GridColumn>
                 <GridColumn Field="@nameof(ListingTrack.Loudness)" HeaderText="Loudness" Visible="false"></GridColumn>
                 <GridColumn Field="@nameof(ListingTrack.Speechiness)" HeaderText="Speechiness" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Valence)" HeaderText="Valence" Visible="false"></GridColumn>
+                <GridColumn Field="@nameof(ListingTrack.Valence)" HeaderText="Valence" Visible="true"></GridColumn>
 
             </GridColumns>
         </EjsGrid>
 
 
+    }
     }
 
 </NeedsAuthentication>
@@ -96,11 +102,8 @@
     [Parameter]
     public string id { get; set; }
 
-    // FullPlaylist loadedPlaylist;
 
-    SimplePlaylist playlistInfo;
-
-    List<ListingTrack> playlistContents;
+    ListingPlaylist playlist;
 
     LoadingStatus loader;
 
@@ -109,11 +112,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // todo - merge FullPlaylist with List<ListingTrack> under it
-        loader = new LoadingStatus();
-
-        playlistInfo = Cache.GetSimplePlaylist(id);
-        playlistContents = await Requester.GetAndExtendPlaylist(id, loader);
+        playlist = Cache.GetPlaylist(id);
+        if (playlist == null || !playlist.IsLoaded)
+        {
+            // TODO - reimplement SimplePlaylist, as this causes a massive lag spike if the playlist is cached
+            loader = new LoadingStatus();
+            playlist = await Requester.GetAndExtendPlaylist(id, loader);
+        }
 
     }
 

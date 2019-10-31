@@ -34,9 +34,9 @@ namespace splaylist.Helpers
 
             UserProfile = await S.GetPrivateProfileAsync();
 
-            // TODO - handle faulty logins
-            // this is mainly here so /callback waits for SpotifyWebAPI to be initialised before redirecting
-            return true;
+            // handle faulty logins by checking if UserProfile gets set or not
+            // useful for making /callback wait for SpotifyWebAPI to be initialised before redirecting
+            return (UserProfile != null);
 
         }
 
