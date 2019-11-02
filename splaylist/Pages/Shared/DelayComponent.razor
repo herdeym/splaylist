@@ -1,0 +1,49 @@
+﻿@* Pauses before showing the child component. 
+    
+    Because the playlist's datagrid is so large, the loading status isn't updated and it appears to stall on 'Loading artist 150 out of 213'.
+    
+    Therefore, this is used to display a message which says 'Rendering Table...' to make it clearer to the user. *@
+
+@using System.Threading
+
+@if (_ready)
+{
+    @ChildContent
+}
+else if (!string.IsNullOrEmpty(Message))
+{
+    <p>@Message</p>
+}
+
+@code
+{
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public int Interval { get; set; }
+
+
+    [Parameter]
+    public string Message { get; set; }
+
+
+    private bool _ready;
+
+    private Timer _timer;
+
+
+    protected override Task OnParametersSetAsync()
+    {
+        _timer = new Timer((_ => this.InvokeAsync(LoadChild)), null, Interval, Interval);
+        return base.OnParametersSetAsync();
+    }
+
+    private void LoadChild() {
+        _ready = true;
+        StateHasChanged();
+        _timer.Dispose();
+    }
+
+}

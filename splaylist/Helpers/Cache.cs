@@ -10,14 +10,14 @@ namespace splaylist.Helpers
         private static NullHandlingDictionary<string, FullArtist> FullArtists;
         private static NullHandlingDictionary<string, FullAlbum> FullAlbums;
         private static NullHandlingDictionary<string, AudioFeatures> AnalysedTracks;
-        private static NullHandlingDictionary<string, ListingPlaylist> Playlists;
+        private static NullHandlingDictionary<string, SimplePlaylist> SimplePlaylists;
 
         // A user's loaded playlists
         public static List<ListingPlaylist> UsersPlaylists { get; set; }
 
         public Cache()
         {
-            Playlists = new NullHandlingDictionary<string, ListingPlaylist>();
+            SimplePlaylists = new NullHandlingDictionary<string, SimplePlaylist>();
             FullArtists = new NullHandlingDictionary<string, FullArtist>();
             FullAlbums = new NullHandlingDictionary<string, FullAlbum>();
             AnalysedTracks = new NullHandlingDictionary<string, AudioFeatures>();
@@ -31,7 +31,7 @@ namespace splaylist.Helpers
 
         public static void Save(AudioFeatures af) => AnalysedTracks.Save(af?.Id, af);
 
-        public static void Save(ListingPlaylist p) => Playlists.Save(p?.Id, p);
+        public static void Save(SimplePlaylist p) => SimplePlaylists.Save(p?.Id, p);
 
 
         // Check if ID is in cache
@@ -42,14 +42,14 @@ namespace splaylist.Helpers
 
         public static bool HasFullAlbum(string id) => FullAlbums.ContainsKey(id);
 
-        public static bool HasPlaylist(string id) => Playlists.ContainsKey(id);
+        public static bool HasSimplePlaylist(string id) => SimplePlaylists.ContainsKey(id);
 
 
         public static FullArtist GetFullArtist(string id) => FullArtists.Get(id);
 
         public static FullAlbum GetFullAlbum(string id) => FullAlbums.Get(id);
 
-        public static ListingPlaylist GetPlaylist(string id) => Playlists.Get(id);
+        public static SimplePlaylist GetSimplePlaylist(string id) => SimplePlaylists.Get(id);
 
         public static AudioFeatures GetAnalysedTrack(string id) => AnalysedTracks.Get(id);
     }

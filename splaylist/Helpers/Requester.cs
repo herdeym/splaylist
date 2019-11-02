@@ -95,7 +95,7 @@ namespace splaylist.Helpers
             {
                 var lp = new ListingPlaylist(playlist);
                 userplaylists.Add(lp);
-                Cache.Save(lp);
+                Cache.Save(playlist); // save simple playlist so the info screen is populated
             }
 
             Cache.UsersPlaylists = userplaylists;
@@ -197,7 +197,7 @@ namespace splaylist.Helpers
             // no real use since the table starts rendering and the site hangs before RefreshableComponent ticks over on this
             status?.ChangeStage(LoadingStatus.Stage.Rendering, 0);
 
-            Cache.Save(listingPlaylist);
+            // Cache.Save(listingPlaylist);
             listingPlaylist.IsLoaded = true;
             return listingPlaylist;
         }

@@ -11,90 +11,84 @@
 @inject NavigationManager nm
 
 
-<NeedsAuthentication>
+    <NeedsAuthentication>
 
-    @if (playlist == null)
-    {
-        <p>Loading Playlist Info...</p>
-    }
-    else
-    {
-        <h2>@playlist.Name</h2>
-        <h3>Created by @playlist.Owner, @playlist.TrackCount tracks</h3>
-
-
-
-    @if (!playlist.IsLoaded)
-    {
-        <RefreshableComponent Interval="200" Enabled="true">
-            <p>@loader.StatusString</p>
-        </RefreshableComponent>
-    }
-    else
-    {
-
-        @if (Grid == null)
+        @if (playlistInfo == null)
         {
-            <p>loading table...</p>
+            <p>Loading Playlist Info...</p>
+        }
+        else
+        {
+            <h2>@playlistInfo.Name</h2>
+            <h3>Created by @playlistInfo.Owner.DisplayName, @playlistInfo.Tracks.Total tracks</h3>
+
+
+
+            @if (playlist == null || !playlist.IsLoaded)
+            {
+                <RefreshableComponent Interval="200" Enabled="true">
+                    <p>@loader.StatusString</p>
+                </RefreshableComponent>
+            }
+            else
+            {
+                @*<DelayComponent Interval="200" Message="Rendering Table...">*@ @* it seems as if this was making the table less responsive, check out later *@
+                <p>Selected: @selectedText</p>
+
+
+                <EjsGrid DataSource="@playlist.Tracks"
+                         @ref="@Grid"
+                         AllowSorting="true"
+                         AllowFiltering="true"
+                         AllowGrouping="true"
+                         AllowSelection="true"
+                         AllowResizing="true"
+                         AllowReordering="true"
+                         ShowColumnChooser="true"
+                         Toolbar="@(new List<object>() { /*new ToolbarItem { Text = "Export" },*/ "ColumnChooser" })">
+                    @*ContextMenuItems="@(new List<object>() { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Delete", "Save", "Cancel"})">*@
+                @* AllowPaging="false" @* paging causes a faster initial load but slow changing pages *@
+
+                <GridFilterSettings Type="FilterType.Excel"></GridFilterSettings>
+                <GridSelectionSettings PersistSelection="true" Type="SelectionType.Multiple"></GridSelectionSettings>
+                <GridEvents RowSelected="HandleSelected" RowDeselected="HandleDeselected" TValue="ListingTrack"></GridEvents>
+
+                <GridColumns>
+                    <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Index)" HeaderText="#" Visible="false" IsPrimaryKey="true"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.AlbumName)" HeaderText="Album"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.ArtistString)" HeaderText="Artists"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Genres)" HeaderText="Genre"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.AlbumDate)" HeaderText="Release Date" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.PlaylistAddedDate)" HeaderText="Date Added to Playlist" Format="yMd" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Id)" HeaderText="Track ID" Visible="false"></GridColumn>
+
+                    <!-- Analysed Values -->
+                    <GridColumn Field="@nameof(ListingTrack.Key)" HeaderText="Key" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Mode)" HeaderText="Major/Minor" Visible="false"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.Tempo)" HeaderText="Tempo" Visible="true"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.TimeSignatureString)" HeaderText="Time Signature" Visible="false"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.Acousticness)" HeaderText="Acousticness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Danceability)" HeaderText="Danceability" Visible="true"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Energy)" HeaderText="Energy" Visible="true"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Instrumentalness)" HeaderText="Instrumentalness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Liveness)" HeaderText="Liveness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Loudness)" HeaderText="Loudness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Speechiness)" HeaderText="Speechiness" Visible="false"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Valence)" HeaderText="Valence" Visible="true"></GridColumn>
+
+                </GridColumns>
+                </EjsGrid>
+                @*</DelayComponent>*@
+            }
         }
 
-        <p>Selected: @selectedText</p>
-
-
-        <EjsGrid DataSource="@playlist.Tracks"
-                 @ref="@Grid"
-                 AllowSorting="true"
-                 AllowFiltering="true"
-                 AllowGrouping="true"
-                 AllowSelection="true"
-                 AllowResizing="true"
-                 AllowReordering="true"
-                 ShowColumnChooser="true"
-                 Toolbar="@(new List<object>() { /*new ToolbarItem { Text = "Export" },*/ "ColumnChooser" })">
-            @*ContextMenuItems="@(new List<object>() { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Delete", "Save", "Cancel"})">*@
-
-
-            <GridFilterSettings Type="FilterType.Excel"></GridFilterSettings>
-            <GridSelectionSettings PersistSelection="true" Type="SelectionType.Multiple"></GridSelectionSettings>
-            <GridEvents RowSelected="HandleSelected" RowDeselected="HandleDeselected" TValue="ListingTrack"></GridEvents>
-
-            <GridColumns>
-                <GridColumn Type="ColumnType.CheckBox" Width="50"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Index)" HeaderText="#" Visible="false" IsPrimaryKey="true"></GridColumn>
-
-                <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.AlbumName)" HeaderText="Album"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.ArtistString)" HeaderText="Artists"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Genres)" HeaderText="Genre"></GridColumn>
-
-                <GridColumn Field="@nameof(ListingTrack.AlbumDate)" HeaderText="Release Date" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.PlaylistAddedDate)" HeaderText="Date Added to Playlist" Format="yMd" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Id)" HeaderText="Track ID" Visible="false"></GridColumn>
-
-                <!-- Analysed Values -->
-                <GridColumn Field="@nameof(ListingTrack.Key)" HeaderText="Key" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Mode)" HeaderText="Major/Minor" Visible="false"></GridColumn>
-
-                <GridColumn Field="@nameof(ListingTrack.Tempo)" HeaderText="Tempo" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.TimeSignatureString)" HeaderText="Time Signature" Visible="false"></GridColumn>
-
-                <GridColumn Field="@nameof(ListingTrack.Acousticness)" HeaderText="Acousticness" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Danceability)" HeaderText="Danceability" Visible="true"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Energy)" HeaderText="Energy" Visible="true"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Instrumentalness)" HeaderText="Instrumentalness" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Liveness)" HeaderText="Liveness" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Loudness)" HeaderText="Loudness" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Speechiness)" HeaderText="Speechiness" Visible="false"></GridColumn>
-                <GridColumn Field="@nameof(ListingTrack.Valence)" HeaderText="Valence" Visible="true"></GridColumn>
-
-            </GridColumns>
-        </EjsGrid>
-
-
-    }
-    }
-
-</NeedsAuthentication>
+    </NeedsAuthentication>
 
 @code
 {
@@ -102,7 +96,7 @@
     [Parameter]
     public string id { get; set; }
 
-
+    SimplePlaylist playlistInfo;
     ListingPlaylist playlist;
 
     LoadingStatus loader;
@@ -112,13 +106,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        playlist = Cache.GetPlaylist(id);
-        if (playlist == null || !playlist.IsLoaded)
-        {
-            // TODO - reimplement SimplePlaylist, as this causes a massive lag spike if the playlist is cached
-            loader = new LoadingStatus();
-            playlist = await Requester.GetAndExtendPlaylist(id, loader);
-        }
+        playlistInfo = Cache.GetSimplePlaylist(id);
+
+        // TODO - fix lag spike when the table begins rendering
+        loader = new LoadingStatus();
+        playlist = await Requester.GetAndExtendPlaylist(id, loader);
+
 
     }
 
