@@ -42,22 +42,18 @@ namespace splaylist.Models
             FullTrack = ft;
             Index = index;
             Id = ft.Id;
+            SetArtistString();
         }
 
-        public ListingTrack(PlaylistTrack pt, int index = -1)
+        // call the FullTrack constructor with the track contained inside PlaylistTrack, then set PlaylistTrack
+        public ListingTrack(PlaylistTrack pt, int index = -1) : this(pt.Track, index)
         {
             PlaylistTrack = pt;
-            FullTrack = pt.Track;
-            Index = index;
-            Id = pt.Track.Id;
         }
 
-        public ListingTrack(SavedTrack st, int index = -1)
+        public ListingTrack(SavedTrack st, int index = -1) : this(st.Track, index)
         {
             SavedTrack = st;
-            FullTrack = st.Track;
-            Index = index;
-            Id = st.Track.Id;
         }
 
 
@@ -104,16 +100,6 @@ namespace splaylist.Models
         // private List<FullArtist> _fullArtists;
         // public List<FullArtist> FullArtists;
 
-        public List<string> Genres
-        {
-            get
-            {
-                // TODO - correct for multiple artists
-                return Cache.GetFullArtist(FullTrack?.Artists[0]?.Id)?.Genres;
-            }
-        }
-
-
 
 
         // todo - fix for precision
@@ -123,23 +109,11 @@ namespace splaylist.Models
 
 
 
-        public string ArtistString
-        {
-            get
-            {
-                {
-                    if (FullTrack?.Artists?.Count == 0) return "";
+        public string ArtistString { get; protected set; }
 
-                    string result = FullTrack?.Artists[0]?.Name;
-                    for (int i = 1; i < FullTrack?.Artists?.Count; i++)
-                    {
-                        result += "; " + FullTrack?.Artists[i]?.Name;
-                    }
+        // now set in Helpers.GenreHelper
+        public string GenreString { get; set; }
 
-                    return result;
-                }
-            }
-        }
 
         #region AudioFeatures
         // mode - major / minor
@@ -208,5 +182,22 @@ namespace splaylist.Models
 
 
         #endregion
+
+
+        private string SetArtistString()
+        {
+            if (FullTrack?.Artists?.Count == 0) return "";
+
+            string result = FullTrack?.Artists[0]?.Name;
+            for (int i = 1; i < FullTrack?.Artists?.Count; i++)
+            {
+                result += "; " + FullTrack?.Artists[i]?.Name;
+            }
+
+            ArtistString = result;
+            return result;
+        }
+
+
     }
 }

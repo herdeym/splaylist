@@ -60,18 +60,18 @@
                     <GridColumn Field="@nameof(ListingTrack.TrackTitle)" HeaderText="Title"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.AlbumName)" HeaderText="Album"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.ArtistString)" HeaderText="Artists"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.Genres)" HeaderText="Genre"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.GenreString)" HeaderText="Genres"></GridColumn>
 
                     <GridColumn Field="@nameof(ListingTrack.AlbumDate)" HeaderText="Release Date" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.PlaylistAddedDate)" HeaderText="Date Added to Playlist" Format="yMd" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.Id)" HeaderText="Track ID" Visible="false"></GridColumn>
 
                     <!-- Analysed Values -->
-                    <GridColumn Field="@nameof(ListingTrack.Key)" HeaderText="Key" Visible="false"></GridColumn>
-                    <GridColumn Field="@nameof(ListingTrack.Mode)" HeaderText="Major/Minor" Visible="false"></GridColumn>
-
                     <GridColumn Field="@nameof(ListingTrack.Tempo)" HeaderText="Tempo" Visible="true"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.TimeSignatureString)" HeaderText="Time Signature" Visible="false"></GridColumn>
+
+                    <GridColumn Field="@nameof(ListingTrack.Key)" HeaderText="Key" Visible="true"></GridColumn>
+                    <GridColumn Field="@nameof(ListingTrack.Mode)" HeaderText="Major/Minor" Visible="false"></GridColumn>
 
                     <GridColumn Field="@nameof(ListingTrack.Acousticness)" HeaderText="Acousticness" Visible="false"></GridColumn>
                     <GridColumn Field="@nameof(ListingTrack.Danceability)" HeaderText="Danceability" Visible="true"></GridColumn>

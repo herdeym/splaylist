@@ -54,5 +54,9 @@ namespace splaylist.Models
         public bool IsLoaded;
 
 
+        [JsonIgnore]
+        public Dictionary<string, Dictionary<string, ListingTrack>> SongsByGenre;
+
+
     }
 }

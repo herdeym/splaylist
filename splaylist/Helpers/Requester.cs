@@ -194,6 +194,10 @@ namespace splaylist.Helpers
             // status?.ChangeStage(LoaderInfo.Stage.Albums, retrievedIDs.AlbumIDs.Count);
             // var CachedAlbums = await Requester.CacheFullAlbums(retrievedIDs.AlbumIDs, status);
 
+            // process genres - set genre strings and create the dictionary of genres
+            listingPlaylist = GenreHelper.ProcessGenres(listingPlaylist);
+
+
             // no real use since the table starts rendering and the site hangs before RefreshableComponent ticks over on this
             status?.ChangeStage(LoadingStatus.Stage.Rendering, 0);
 
