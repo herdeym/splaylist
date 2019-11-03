@@ -20,6 +20,8 @@ namespace splaylist.Helpers
                 foreach (var artist in track?.ArtistObjects)
                 {
                     var fullartist = Cache.GetFullArtist(artist?.Id);
+                    if (fullartist == null) break;
+
                     foreach (var genre in fullartist?.Genres)
                     {
                         result += genre + "; ";
