@@ -1,0 +1,33 @@
+﻿
+@using Syncfusion.EJ2.Blazor.Grids
+@using splaylist.Models
+
+<EjsGrid DataSource="@_converted"
+         AllowSorting="true">
+    <GridColumns>
+        <GridColumn Field="@nameof(GenreStub.Genre)" HeaderText="Genre"></GridColumn>
+        <GridColumn Field="@nameof(GenreStub.Count)" HeaderText="Count"></GridColumn>
+    </GridColumns>
+</EjsGrid>
+
+
+@code {
+
+    [Parameter]
+    public Dictionary<string, Dictionary<string, ListingTrack>> Contents { get; set; }
+
+    private List<GenreStub> _converted;
+
+    protected override async Task OnInitializedAsync() {
+        _converted = new List<GenreStub>();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _converted = new List<GenreStub>();
+        foreach (var genre in Contents) {
+            _converted.Add(new GenreStub(genre));
+        }
+    }
+
+}

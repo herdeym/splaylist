@@ -32,22 +32,21 @@
             }
             else
             {
-                @*<DelayComponent Interval="200" Message="Rendering Table...">*@ @* it seems as if this was making the table less responsive, check out later *@
-                
+                @*<DelayComponent Interval="200" Message="Rendering Table...">*@
+                @* it seems as if this was making the table less responsive, check out later *@
 
-                <table>
-                    <tr>
-                        <th>Genre</th>
-                        <th>Tracks</th>
-                    </tr>
-                    @foreach (var row in playlist.SongsByGenre)
-                    {
-                        <tr>
-                            <td>@row.Key</td>
-                            <td>@row.Value.Count</td>
-                        </tr>
-                    }
-                </table>
+
+
+                @if (showGenres)
+                {
+                    <button @onclick="ToggleGenres">Hide Genres</button>
+                    <GenreGrid Contents="@playlist.SongsByGenre"></GenreGrid>
+                }
+                else
+                {
+                    <button @onclick="ToggleGenres">View Genres</button>
+                }
+
 
                 <ListingTrackGrid Contents="@playlist.Tracks"></ListingTrackGrid>
 
@@ -79,6 +78,14 @@
 
 
     }
+
+    bool showGenres = false;
+
+    void ToggleGenres()
+    {
+        showGenres = !showGenres;
+    }
+
 
 
 }
