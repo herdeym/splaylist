@@ -3,6 +3,7 @@
 
 @inject Auth Auth
 @inject API API
+@inject NavigationManager nm
 
 <div class="sidebar">
     <div class="top-row pl-4 navbar navbar-dark">
@@ -48,7 +49,7 @@
     <div class="top-row px-4">
         @if (!API.IsAuthenticated())
         {
-            <a href="@Auth.GetLoginLink()" class="ml-md-auto">Log In with Spotify</a>
+            <a href="@Auth.GetLoginLink(nm.BaseUri)" class="ml-md-auto">Log In with Spotify</a>
         }
         else
         {

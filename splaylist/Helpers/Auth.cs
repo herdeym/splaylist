@@ -21,10 +21,10 @@ namespace splaylist.Helpers
             " user-read-private";
 
         private static string _clientID = "8061b5bc221041f39b7ef54c58113f09";
-        private static string _callbackURI = "https://localhost:44326/callback";
+        private static string _callbackURI = "https://localhost:44326/";
 
         public static string ClientID => _clientID;
-        public static string CallbackURI => _callbackURI;
+        public static string BaseURI => _callbackURI;
 
         public static bool ShowSpotifyPermissions = false;
 
@@ -63,17 +63,24 @@ namespace splaylist.Helpers
         }
 
 
-        public static Uri GetLoginLink()
+        public static Uri GetLoginLink(string _baseURI)
         {
             return new Uri("https://accounts.spotify.com/authorize" +
                 "?response_type=token" +
                 // next line won't do anything until nonce is set in a cookie
                 //"&state=" + nonce +
                 "&client_id=" + ClientID +
-                "&redirect_uri=" + CallbackURI +
+                "&redirect_uri=" + _baseURI + "callback" +
                 "&scope=" + _scopes +
                 "&show_dialog=" + ShowSpotifyPermissions.ToString());
         }
+
+        public static Uri GetLoginLink()
+        {
+            // fallback - the login links need to use NavigationManager.BaseURI to generate the right callback URI
+            return GetLoginLink(BaseURI);
+        }
+            
     }
 
 }

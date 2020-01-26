@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+@inject NavigationManager nm
 @using splaylist.Helpers
 
 <!-- HTML derived from https://html5up.net/hyperspace -->
@@ -11,7 +12,7 @@
         <p>Show the extra data hidden in <a href="https://developer.spotify.com/discover/" target="_blank">Spotify's API.</a><br />
         Project in development; things will be incomplete or broken.</p>
         <ul class="actions">
-            <li><a href="@Auth.GetLoginLink()" class="button" style="background-color: #1c7d2f;">Log In with Spotify</a></li>
+            <li><a href="@Auth.GetLoginLink(nm.BaseUri)" class="button" style="background-color: #1c7d2f;">Log In with Spotify</a></li>
         </ul>
 
     </div>
