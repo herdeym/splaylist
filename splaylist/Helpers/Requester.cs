@@ -102,6 +102,11 @@ namespace splaylist.Helpers
             return userplaylists;
         }
 
+        public static FullTrack GetTrack(string id)
+        {
+            return API.S.GetTrack(id);
+        }
+
 
         public static async Task<List<ListingTrack>> GetPlaylistTracks(FullPlaylist fp, LoadingStatus status = null)
         {

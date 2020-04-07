@@ -1,0 +1,32 @@
+﻿@page "/home"
+
+@using splaylist.Helpers
+@using SpotifyAPI.Web.Models
+@using SpotifyAPI.Web 
+@using splaylist.Models
+
+@inject API api 
+
+<NeedsAuthentication>
+    <p>hi</p>
+    <p>@szoveg</p>
+</NeedsAuthentication>
+
+@code {
+
+    FullTrack track;
+    string szoveg = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (api.IsAuthenticated())
+            szoveg = "auth";
+        else
+            szoveg = "nem auth";
+
+        track = Requester.GetTrack("6ie28NwprZXsqXH5Cde2RC");
+
+        szoveg = track.Name;
+
+    }
+}

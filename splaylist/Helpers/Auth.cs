@@ -20,8 +20,8 @@ namespace splaylist.Helpers
             // "%20user-follow-read" +
             " user-read-private";
 
-        private static string _clientID = "8061b5bc221041f39b7ef54c58113f09";
-        private static string _callbackURI = "https://localhost:44326/";
+        private static string _clientID = "520ed4783a0f410a8a0436513f0bf048";
+        private static string _callbackURI = "http://localhost:51660/callback";
 
         public static string ClientID => _clientID;
         public static string BaseURI => _callbackURI;
