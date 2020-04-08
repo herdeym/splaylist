@@ -24,7 +24,7 @@
         else
             szoveg = "nem auth";
 
-        track = Requester.GetTrack("6ie28NwprZXsqXH5Cde2RC");
+        track = await API.S.GetTrackAsync("6ie28NwprZXsqXH5Cde2RC");
 
         szoveg = track.Name;
 
